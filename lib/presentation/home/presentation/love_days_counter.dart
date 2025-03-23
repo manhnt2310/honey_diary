@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'dart:async';
 
-import '/modules/diary/presentations/diary_screen.dart';
+import '../../diary/presentations/diary_screen.dart';
 
 class LoveDaysCounter extends StatefulWidget {
   final DateTime startDate;
