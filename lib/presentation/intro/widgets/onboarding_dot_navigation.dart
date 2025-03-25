@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../../utils/constants/colors.dart';
-import '../../../../../utils/constants/sizes.dart';
-import '../../../../../utils/device/device_utility.dart';
-import '../../../../../utils/helpers/helper_functions.dart';
+import '../../../shared/utils/constants/colors.dart';
+import '../../../shared/utils/constants/sizes.dart';
+import '../../../shared/utils/device/device_utility.dart';
+import '../../../shared/utils/helpers/helper_functions.dart';
 import '../onboarding_controller.dart';
 
 class OnBoardingDotNavigation extends StatelessWidget {

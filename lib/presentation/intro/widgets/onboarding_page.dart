@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/utils/constants/sizes.dart';
+import '../../../shared/utils/constants/sizes.dart';
 
 // ignore: must_be_immutable'
 

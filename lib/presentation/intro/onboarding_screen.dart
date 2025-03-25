@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '/modules/intro/onboarding_controller.dart';
-import '/utils/constants/image_strings.dart';
-import '/utils/constants/text_strings.dart';
+import 'onboarding_controller.dart';
+import '../../shared/utils/constants/image_strings.dart';
+import '../../shared/utils/constants/text_strings.dart';
 import 'widgets/onboarding_dot_navigation.dart';
 import 'widgets/onboarding_next_button.dart';
 import 'widgets/onboarding_page.dart';
