@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:honey_diary/presentation/weather/pages/weather_page.dart';
+import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'dart:async';
 
