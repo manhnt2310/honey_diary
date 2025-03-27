@@ -24,7 +24,7 @@ class OnboardingScreen extends StatelessWidget {
             onPageChanged: controller.updatePageIndicator,
             children: const [
               OnboardingPape(
-                image: ImageStrings.onboarding1,
+                image: ImageStrings.love,
                 title: TextStrings.title1,
                 subTitle: TextStrings.subTitle1,
               ),
