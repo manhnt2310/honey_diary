@@ -22,23 +22,33 @@ class DatabaseHelper {
     final docDir = await getApplicationDocumentsDirectory();
     final path = join(docDir.path, fileName);
 
-    // Mở database
+    // Mở database với version = 2
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _onUpgrade,
     );
   }
 
-  // Tạo bảng
+  // Tạo bảng (cho cài đặt lần đầu)
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE anniversaries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
         date INTEGER,
-        imagePath TEXT
+        imagePath TEXT,
+        content TEXT
       )
     ''');
+  }
+
+  // Nâng cấp DB (cho cài đặt cũ đã có version 1)
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // Nếu version cũ < 2, thì ALTER TABLE để thêm cột content
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE anniversaries ADD COLUMN content TEXT');
+    }
   }
 }
