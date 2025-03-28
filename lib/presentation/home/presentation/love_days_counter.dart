@@ -393,7 +393,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                'đang yêu',
+                                'in love',
                                 style: TextStyle(
                                   fontSize: 23,
                                   color: Colors.pink,
@@ -407,7 +407,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                                 ),
                               ),
                               const Text(
-                                'ngày',
+                                'days',
                                 style: TextStyle(
                                   fontSize: 23,
                                   color: Colors.pink,

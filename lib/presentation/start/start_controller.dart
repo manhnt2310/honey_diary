@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../home/presentation/love_days_counter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartController extends GetxController {
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
@@ -18,9 +19,16 @@ class StartController extends GetxController {
     }
   }
 
-  void startCounter() {
+  Future<void> startCounter() async {
     if (selectedDate.value != null) {
-      Get.to(() => LoveDaysCounter(startDate: selectedDate.value!));
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'selectedDate',
+        selectedDate.value!.toIso8601String(),
+      );
+      await prefs.setBool('hasSeenIntro', true);
+
+      Get.off(() => LoveDaysCounter(startDate: selectedDate.value!));
     }
   }
 
