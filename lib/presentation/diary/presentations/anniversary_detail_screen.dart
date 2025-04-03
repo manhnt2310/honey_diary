@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'add_anniversary_screen.dart';
 import 'diary_screen.dart';
 
@@ -16,20 +15,32 @@ class AnniversaryDetailScreen extends StatefulWidget {
 
 class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
   late Anniversary currentAnn;
+  late List<String> imagePaths;
+  final PageController _pageController = PageController(viewportFraction: 0.8);
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    // Sao chép dữ liệu ban đầu
     currentAnn = widget.anniversary;
+    imagePaths = currentAnn.imagePaths;
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page?.round() ?? 0;
+      });
+    });
   }
 
-  // Hàm format ngày
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   String get _formattedDate {
-    return DateFormat("d/MM/yyyy").format(currentAnn.date);
+    return DateFormat("dd/MM/yyyy").format(currentAnn.date);
   }
 
-  // Hàm xử lý khi bấm nút Edit
   Future<void> _editAnniversary() async {
     final updated = await Navigator.push<Anniversary>(
       context,
@@ -37,15 +48,14 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
         builder: (context) => AddAnniversaryScreen(anniversary: currentAnn),
       ),
     );
-
     if (updated != null) {
       setState(() {
-        currentAnn = updated; // cập nhật hiển thị
+        currentAnn = updated;
+        imagePaths = currentAnn.imagePaths;
       });
     }
   }
 
-  // Hàm xử lý khi bấm nút Delete với xác nhận
   Future<void> _deleteAnniversary() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -67,14 +77,12 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
             ],
           ),
     );
-
     if (confirm == true) {
-      // Trả về signal "deleted" cho màn hình trước
+      // ignore: use_build_context_synchronously
       Navigator.pop(context, 'deleted');
     }
   }
 
-  // Hàm thoát màn hình, trả về Anniversary đã update (nếu có)
   void _popWithUpdatedAnniversary() {
     Navigator.pop(context, currentAnn);
   }
@@ -86,56 +94,70 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Detail'),
         actions: [
-          // Nút sửa
           IconButton(icon: const Icon(Icons.edit), onPressed: _editAnniversary),
-          // Nút xoá
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: _deleteAnniversary,
           ),
         ],
       ),
-      // Khi người dùng bấm nút back mặc định, ta cũng pop về kèm item (có thể đã update)
       body: WillPopScope(
         onWillPop: () async {
           _popWithUpdatedAnniversary();
           return false;
         },
-        // Thêm padding bên dưới để nội dung không bị che bởi nút FAB
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 100.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Ảnh bo tròn
-              if (currentAnn.imagePath != null &&
-                  currentAnn.imagePath!.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.file(
-                    File(currentAnn.imagePath!),
-                    height: 300,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              else
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    height: 300,
-                    color: Colors.grey.shade300,
-                    child: const Icon(
-                      Icons.image,
-                      size: 100,
-                      color: Colors.grey,
+              if (imagePaths.isNotEmpty)
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 290,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: imagePaths.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: AspectRatio(
+                                aspectRatio: 1, // ép ảnh thành hình vuông
+                                child: Image.file(
+                                  File(imagePaths[index]),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(imagePaths.length, (index) {
+                        bool isActive = index == _currentPage;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: isActive ? 10 : 6,
+                          height: isActive ? 10 : 6,
+                          decoration: BoxDecoration(
+                            color: isActive ? Colors.pinkAccent : Colors.grey,
+                            shape: BoxShape.circle,
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
-              const SizedBox(height: 16),
 
-              // Ngày bên trong Container bo góc
-              // Thay thế phần hiển thị ngày
+              const SizedBox(height: 16),
               Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -147,7 +169,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withValues(alpha: .1),
                         blurRadius: 4,
                         offset: const Offset(2, 2),
                       ),
@@ -163,10 +185,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Tiêu đề
               Text(
                 currentAnn.title,
                 style: const TextStyle(
@@ -176,24 +195,16 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-
-              // Nội dung
               if (currentAnn.content != null && currentAnn.content!.isNotEmpty)
-                Text(currentAnn.content!, style: const TextStyle(fontSize: 16))
-              else
-                const Text(
-                  'No content',
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                ),
+                Text(currentAnn.content!, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),
       ),
-      // Đưa nút check ra giữa
       floatingActionButton: FloatingActionButton(
         onPressed: _popWithUpdatedAnniversary,
-        backgroundColor: Colors.pinkAccent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        backgroundColor: const Color.fromARGB(255, 245, 146, 179),
+        shape: const CircleBorder(),
         child: const Icon(Icons.check, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

@@ -9,46 +9,41 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
-  // Hàm trả về đối tượng Database (singleton)
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('anniversaries.db');
     return _database!;
   }
 
-  // Tạo và mở database
   Future<Database> _initDB(String fileName) async {
-    // Lấy đường dẫn thư mục ứng dụng
     final docDir = await getApplicationDocumentsDirectory();
     final path = join(docDir.path, fileName);
-
-    // Mở database với version = 2
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
-      onUpgrade: _onUpgrade,
+      //onUpgrade: _onUpgrade,
     );
   }
 
-  // Tạo bảng (cho cài đặt lần đầu)
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE anniversaries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
         date INTEGER,
-        imagePath TEXT,
+        imagePaths TEXT,  -- Lưu danh sách ảnh dưới dạng chuỗi (ví dụ: đường dẫn phân cách dấu phẩy)
         content TEXT
       )
     ''');
   }
 
-  // Nâng cấp DB (cho cài đặt cũ đã có version 1)
-  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Nếu version cũ < 2, thì ALTER TABLE để thêm cột content
-    if (oldVersion < 2) {
-      await db.execute('ALTER TABLE anniversaries ADD COLUMN content TEXT');
-    }
-  }
+  // Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  //   if (oldVersion < 2) {
+  //     await db.execute('ALTER TABLE anniversaries ADD COLUMN content TEXT');
+  //   }
+  //   if (oldVersion < 3) {
+  //     await db.execute('ALTER TABLE anniversaries ADD COLUMN imagePaths TEXT');
+  //   }
+  // }
 }
