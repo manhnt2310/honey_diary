@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'dart:async';
-
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 import '../../diary/presentations/diary_screen.dart';
 
 class LoveDaysCounter extends StatefulWidget {
@@ -20,17 +22,13 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
   late Animation<int> _dayAnimation;
   late Animation<double> _percentAnimation;
 
-  // Biến điều khiển nhịp đập của icon trái tim
+  late PageController _pageController;
+  int _currentPage = 0;
+
+  // Nhịp đập tim & đổi màu
   double _scaleFactor = 1.0;
-  // Màu của icon trái tim
   Color _iconColor = Colors.pink;
-  // Vòng lặp thay đổi màu trái tim
   int _colorIndex = 0;
-
-  // Biến bật/tắt giao diện: 4 ô hay vòng tròn
-  bool _showYearsMonthsDays = false;
-
-  // Danh sách màu cho trái tim
   final List<Color> _colors = [
     Colors.pink,
     Colors.red,
@@ -44,80 +42,82 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
     Colors.white,
   ];
 
-  // Mốc chuẩn 365 ngày để tính % hiển thị vòng tròn
+  // Tính %
   final int _cycleDays = 365;
   late int totalDays;
 
-  // Biến hiển thị thời gian hiện tại
+  // Đồng hồ real‑time
   late String _currentTime;
-  Timer? _timeTimer; // để hủy timer khi dispose
+  Timer? _timeTimer;
+
+  // Birth date & Zodiac cho Me và You
+  DateTime? _birthDateMe;
+  DateTime? _birthDateYou;
+  String _zodiacSignMe = "Zodiac";
+  String _zodiacSignYou = "Zodiac";
+  int? _ageMe;
+  int? _ageYou;
 
   @override
   void initState() {
     super.initState();
 
-    // Tính số ngày từ startDate đến hiện tại
-    final DateTime now = DateTime.now();
-    final Duration difference = now.difference(widget.startDate);
-    totalDays = difference.inDays;
-
-    // Tính phần trăm cho CircularPercentIndicator
+    // Tính tổng ngày và phần trăm
+    final now = DateTime.now();
+    totalDays = now.difference(widget.startDate).inDays;
     double finalPercent = (totalDays % _cycleDays) / _cycleDays;
 
-    // Khởi tạo AnimationController
+    // Animation controller cho day & percent
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     );
-
-    // Animation số ngày (0 -> totalDays)
     _dayAnimation = IntTween(begin: 0, end: totalDays).animate(_controller)
-      ..addListener(() {
-        setState(() {});
-      });
-
-    // Animation phần trăm (0.0 -> finalPercent)
+      ..addListener(() => setState(() {}));
     _percentAnimation = Tween<double>(
       begin: 0.0,
       end: finalPercent,
-    ).animate(_controller)..addListener(() {
-      setState(() {});
-    });
-
-    // Chạy animation
+    ).animate(_controller)..addListener(() => setState(() {}));
     _controller.forward();
 
-    // Khởi chạy nhịp đập tim
+    // Nhịp đập tim
     _startHeartBeatAnimation();
 
-    // Khởi tạo và cập nhật thời gian hiện tại
-    _currentTime = _getTime();
+    // Đồng hồ: inline luôn lấy giờ
+    _currentTime = _formatTime(DateTime.now());
     _timeTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final now = DateTime.now();
       setState(() {
-        _currentTime = _getTime();
+        _currentTime = _formatTime(now);
       });
     });
+
+    // PageController & listener để cập nhật indicator
+    _pageController = PageController(initialPage: 0)..addListener(() {
+      int next = _pageController.page!.round();
+      if (_currentPage != next) {
+        setState(() => _currentPage = next);
+      }
+    });
+
+    _loadSavedBirthDates();
   }
 
-  // Lấy giờ-phút-giây hiện tại dạng "HH:MM:SS"
-  String _getTime() {
-    final now = DateTime.now();
-    final hh = now.hour.toString().padLeft(2, '0');
-    final mm = now.minute.toString().padLeft(2, '0');
-    final ss = now.second.toString().padLeft(2, '0');
+  String _formatTime(DateTime dt) {
+    final hh = dt.hour.toString().padLeft(2, '0');
+    final mm = dt.minute.toString().padLeft(2, '0');
+    final ss = dt.second.toString().padLeft(2, '0');
     return "$hh:$mm:$ss";
   }
 
-  // Tính hiệu ứng nhịp đập tim
   void _startHeartBeatAnimation() {
-    Timer.periodic(const Duration(milliseconds: 500), (Timer timer) {
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
         _scaleFactor = _scaleFactor == 1.0 ? 1.2 : 1.0;
       });
     });
   }
 
-  // Đổi màu trái tim
   void _changeHeartColor() {
     setState(() {
       _colorIndex = (_colorIndex + 1) % _colors.length;
@@ -125,45 +125,27 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
     });
   }
 
-  // Vuốt để chuyển giao diện
-  void _toggleDateFormat() {
-    setState(() {
-      _showYearsMonthsDays = !_showYearsMonthsDays;
-    });
-  }
-
-  // Tách số ngày thành năm, tháng, tuần, ngày
   List<int> _calculateUnits(int _) {
-    DateTime now = DateTime.now();
-
-    // Tính hiệu số lịch cho năm, tháng, ngày
+    final now = DateTime.now();
     int years = now.year - widget.startDate.year;
     int months = now.month - widget.startDate.month;
     int days = now.day - widget.startDate.day;
 
-    // Điều chỉnh nếu ngày âm (chưa đến ngày trong tháng)
     if (days < 0) {
       months -= 1;
-      // Lấy số ngày của tháng trước (lưu ý: DateTime(year, month, 0) trả về ngày cuối tháng trước)
-      DateTime previousMonth = DateTime(now.year, now.month, 0);
-      days += previousMonth.day;
+      final prevMonth = DateTime(now.year, now.month, 0);
+      days += prevMonth.day;
     }
-
-    // Điều chỉnh nếu tháng âm (chưa đến tháng trong năm)
     if (months < 0) {
       years -= 1;
       months += 12;
     }
 
-    // Tính số tuần và số ngày còn lại từ phần "ngày" đã tính được
     int weeks = days ~/ 7;
     int remainingDays = days % 7;
-
-    // Trả về list theo thứ tự: [năm, tháng, tuần, số ngày còn lại]
     return [years, months, weeks, remainingDays];
   }
 
-  // Widget tạo mỗi ô hiển thị
   Widget _buildBox(int value, String label) {
     return Container(
       width: 70,
@@ -193,19 +175,126 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
     );
   }
 
+  Future<void> _loadSavedBirthDates() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final meStr = prefs.getString('birthDateMe');
+    if (meStr != null) {
+      final dt = DateTime.parse(meStr);
+      setState(() {
+        _birthDateMe = dt;
+        _ageMe = _calculateAge(dt);
+        _zodiacSignMe = _getZodiacSign(dt);
+      });
+    }
+
+    final youStr = prefs.getString('birthDateYou');
+    if (youStr != null) {
+      final dt = DateTime.parse(youStr);
+      setState(() {
+        _birthDateYou = dt;
+        _ageYou = _calculateAge(dt);
+        _zodiacSignYou = _getZodiacSign(dt);
+      });
+    }
+  }
+
+  // Hiện bottom sheet chọn ngày sinh cho Me hoặc You
+  void _showBirthDatePicker(bool isMe) {
+    DateTime tempPicked =
+        (isMe ? _birthDateMe : _birthDateYou) ?? DateTime(2000, 1, 1);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Container(
+          height: 300,
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 220,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: tempPicked,
+                  maximumDate: DateTime.now(),
+                  onDateTimeChanged: (DateTime dt) {
+                    tempPicked = dt;
+                  },
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+
+                  final age = _calculateAge(tempPicked);
+                  final zodiac = _getZodiacSign(tempPicked);
+
+                  // Cập nhật state
+                  setState(() {
+                    if (isMe) {
+                      _birthDateMe = tempPicked;
+                      _ageMe = age;
+                      _zodiacSignMe = zodiac;
+                    } else {
+                      _birthDateYou = tempPicked;
+                      _ageYou = age;
+                      _zodiacSignYou = zodiac;
+                    }
+                  });
+
+                  // Lưu vào SharedPreferences
+                  final prefs = await SharedPreferences.getInstance();
+                  final key = isMe ? 'birthDateMe' : 'birthDateYou';
+                  await prefs.setString(key, tempPicked.toIso8601String());
+                },
+                child: const Text('Done'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  int _calculateAge(DateTime birthDate) {
+    final now = DateTime.now();
+    int age = now.year - birthDate.year;
+    if (now.month < birthDate.month ||
+        (now.month == birthDate.month && now.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  String _getZodiacSign(DateTime date) {
+    final d = date.day;
+    final m = date.month;
+    if ((m == 3 && d >= 21) || (m == 4 && d <= 19)) return "Aries";
+    if ((m == 4 && d >= 20) || (m == 5 && d <= 20)) return "Taurus";
+    if ((m == 5 && d >= 21) || (m == 6 && d <= 20)) return "Gemini";
+    if ((m == 6 && d >= 21) || (m == 7 && d <= 22)) return "Cancer";
+    if ((m == 7 && d >= 23) || (m == 8 && d <= 22)) return "Leo";
+    if ((m == 8 && d >= 23) || (m == 9 && d <= 22)) return "Virgo";
+    if ((m == 9 && d >= 23) || (m == 10 && d <= 22)) return "Libra";
+    if ((m == 10 && d >= 23) || (m == 11 && d <= 21)) return "Scorpio";
+    if ((m == 11 && d >= 22) || (m == 12 && d <= 21)) return "Sagittarius";
+    if ((m == 12 && d >= 22) || (m == 1 && d <= 19)) return "Capricorn";
+    if ((m == 1 && d >= 20) || (m == 2 && d <= 18)) return "Aquarius";
+    return "Pisces";
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     _timeTimer?.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Tách ngày ra 4 đơn vị
-    final units = _calculateUnits(
-      _dayAnimation.value,
-    ); // [năm, tháng, tuần, ngày]
+    final units = _calculateUnits(_dayAnimation.value);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -216,34 +305,26 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Nút đầu tiên nằm bên trái
             Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DiaryScreen(),
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const DiaryScreen()),
                       ),
-                    );
-                  },
                   icon: const Icon(Icons.menu_book_rounded),
                 ),
                 IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WeatherPage(),
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const WeatherPage()),
                       ),
-                    );
-                  },
                   icon: const Icon(Icons.cloud_outlined),
                 ),
               ],
             ),
-            // Nhóm 3 nút còn lại nằm bên phải
             Row(
               children: [
                 IconButton(
@@ -260,133 +341,39 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
           ],
         ),
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (!_showYearsMonthsDays && details.primaryVelocity! < 0) {
-            // Khi đang ở màn hình ban đầu (circular indicator)
-            // và vuốt từ phải sang trái (primaryVelocity < 0)
-            _toggleDateFormat();
-          } else if (_showYearsMonthsDays && details.primaryVelocity! > 0) {
-            // Khi đang ở màn hình 4 ô (years, months, weeks, days)
-            // và vuốt từ trái sang phải (primaryVelocity > 0)
-            _toggleDateFormat();
-          }
-        },
-        child: Stack(
-          children: <Widget>[
-            // Hình nền
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('lib/assets/image/mountains.jpg'),
-                  fit: BoxFit.cover,
-                ),
+      body: Stack(
+        children: [
+          // Background
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/assets/image/mountains.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            // Nội dung chính
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // Nếu _showYearsMonthsDays = true => hiển thị thời gian
-                  // Ngược lại => hiển thị vòng tròn đếm
-                  _showYearsMonthsDays
-                      ? SizedBox(
-                        width: double.infinity,
-                        height: 250,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Hàng trên: 4 ô
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildBox(units[0], "NĂM"),
-                                  const SizedBox(width: 10),
-                                  _buildBox(units[1], "THÁNG"),
-                                  const SizedBox(width: 10),
-                                  _buildBox(units[2], "TUẦN"),
-                                  const SizedBox(width: 10),
-                                  _buildBox(units[3], "NGÀY"),
-                                ],
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              // Hàng dưới: Ngày bắt đầu + Thời gian hiện tại
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  // Ngày bắt đầu
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withValues(alpha: .7),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      "${widget.startDate.day.toString().padLeft(2, '0')}"
-                                      "/${widget.startDate.month.toString().padLeft(2, '0')}"
-                                      "/${widget.startDate.year}",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Thời gian hiện tại
-                                  Row(
-                                    children:
-                                        _currentTime.split(":").map((unit) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 4,
-                                            ),
-                                            child: CircleAvatar(
-                                              radius: 18,
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                    255,
-                                                    247,
-                                                    105,
-                                                    152,
-                                                  ),
-                                              child: Text(
-                                                unit,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      : Container(
+          // Nội dung chính
+          Column(
+            children: [
+              const SizedBox(height: kToolbarHeight + 24),
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  children: [
+                    // Trang 0: CircularPercentIndicator
+                    Center(
+                      child: Container(
                         width: 250,
                         height: 250,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(125),
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: Colors.white.withValues(alpha: .4),
                         ),
                         child: CircularPercentIndicator(
                           radius: 125.0,
                           lineWidth: 10.0,
-                          animation: false, // Tắt animation của plugin
+                          animation: false,
                           percent: _percentAnimation.value,
                           backgroundColor: Colors.white.withValues(alpha: .6),
                           center: Column(
@@ -426,20 +413,232 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                           circularStrokeCap: CircularStrokeCap.round,
                         ),
                       ),
+                    ),
 
-                  const SizedBox(height: 90),
-                  // Ảnh + Trái tim
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundImage: AssetImage(
-                          'lib/assets/image/male.jpg',
+                    // Trang 1: 4 ô years/months/weeks/days
+                    SizedBox(
+                      width: double.infinity,
+                      height: 250,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildBox(units[0], "NĂM"),
+                                const SizedBox(width: 10),
+                                _buildBox(units[1], "THÁNG"),
+                                const SizedBox(width: 10),
+                                _buildBox(units[2], "TUẦN"),
+                                const SizedBox(width: 10),
+                                _buildBox(units[3], "NGÀY"),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Ngày bắt đầu
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withValues(alpha: .7),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    "${widget.startDate.day.toString().padLeft(2, '0')}"
+                                    "/${widget.startDate.month.toString().padLeft(2, '0')}"
+                                    "/${widget.startDate.year}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+
+                                // Thời gian hiện tại
+                                Row(
+                                  children:
+                                      _currentTime
+                                          .split(':')
+                                          .asMap()
+                                          .entries
+                                          .expand<Widget>((entry) {
+                                            final idx = entry.key;
+                                            final unit = entry.value;
+                                            final avatar = Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 1,
+                                                  ),
+                                              child: CircleAvatar(
+                                                radius: 18,
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                      255,
+                                                      247,
+                                                      105,
+                                                      152,
+                                                    ),
+                                                child: Text(
+                                                  unit,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            if (idx <
+                                                _currentTime.split(':').length -
+                                                    1) {
+                                              return [
+                                                avatar,
+                                                const Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 1,
+                                                  ),
+                                                  child: Text(
+                                                    ':',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: Color.fromARGB(
+                                                        255,
+                                                        247,
+                                                        105,
+                                                        152,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ];
+                                            } else {
+                                              return [avatar];
+                                            }
+                                          })
+                                          .toList(),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      GestureDetector(
+                    ),
+                  ],
+                ),
+              ),
+
+              // Page indicator
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: 2,
+                  effect: WormEffect(
+                    dotHeight: 12,
+                    dotWidth: 12,
+                    dotColor: Colors.white.withValues(alpha: .5),
+                    activeDotColor: Colors.pinkAccent,
+                  ),
+                ),
+              ),
+
+              // Thay cho cả phần Avatar + Heart + Me/You + Zodiac/Age
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  children: [
+                    // Cột cho "Me"
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Avatar
+                          const CircleAvatar(
+                            radius: 50,
+                            backgroundImage: AssetImage(
+                              'lib/assets/image/male.jpg',
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Label
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: .6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'Male',
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: Color.fromARGB(255, 3, 125, 165),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Zodiac + Age
+                          GestureDetector(
+                            onTap: () => _showBirthDatePicker(true),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_ageMe != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: .6),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      "${_ageMe!}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(width: 5),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: .6),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    _zodiacSignMe,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Icon trái tim ở giữa
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: GestureDetector(
                         onTap: _changeHeartColor,
                         child: Transform.scale(
                           scale: _scaleFactor,
@@ -450,40 +649,93 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                           ),
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundImage: AssetImage(
-                          'lib/assets/image/female.jpg',
-                        ),
+                    ),
+
+                    // Cột cho "You"
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircleAvatar(
+                            radius: 50,
+                            backgroundImage: AssetImage(
+                              'lib/assets/image/female.jpg',
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: .6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'Female',
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: Color.fromARGB(255, 246, 104, 125),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: () => _showBirthDatePicker(false),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_ageYou != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: .6),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      "${_ageYou!}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(width: 5),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: .6),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    _zodiacSignYou,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // Label "Male" và "Female"
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Male',
-                        style: TextStyle(fontSize: 20, color: Colors.lightBlue),
-                      ),
-                      SizedBox(width: 135),
-                      Text(
-                        'Female',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.pinkAccent,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+              const SizedBox(height: 70),
+            ],
+          ),
+        ],
       ),
     );
   }
