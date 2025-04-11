@@ -587,7 +587,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                   colorClickableText: Colors.pink.shade100,
                                   trimMode: TrimMode.Line,
                                   trimCollapsedText: ' Read more',
-                                  trimExpandedText: ' Read less',
+                                  trimExpandedText: ' Hide',
                                   style: const TextStyle(fontSize: 18),
                                   moreStyle: const TextStyle(
                                     fontSize: 16,
