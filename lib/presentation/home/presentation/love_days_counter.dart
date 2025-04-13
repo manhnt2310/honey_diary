@@ -579,7 +579,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                             child: const Text(
                               'Male',
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 21,
                                 color: Color.fromARGB(255, 3, 125, 165),
                               ),
                             ),
@@ -605,7 +605,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                                     child: Text(
                                       "${_ageMe!}",
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 17,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -623,7 +623,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                                   child: Text(
                                     _zodiacSignMe,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -675,7 +675,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                             child: const Text(
                               'Female',
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 21,
                                 color: Color.fromARGB(255, 246, 104, 125),
                               ),
                             ),
@@ -700,7 +700,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                                     child: Text(
                                       "${_ageYou!}",
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 17,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -718,7 +718,7 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                                   child: Text(
                                     _zodiacSignYou,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       color: Colors.black,
                                     ),
                                   ),
