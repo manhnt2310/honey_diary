@@ -7,17 +7,16 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 import '../../diary/presentations/diary_screen.dart';
 
-class LoveDaysCounter extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final DateTime startDate;
 
-  const LoveDaysCounter({super.key, required this.startDate});
+  const HomeScreen({super.key, required this.startDate});
 
   @override
-  LoveDaysCounterState createState() => LoveDaysCounterState();
+  HomeState createState() => HomeState();
 }
 
-class LoveDaysCounterState extends State<LoveDaysCounter>
-    with SingleTickerProviderStateMixin {
+class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _dayAnimation;
   late Animation<double> _percentAnimation;
@@ -427,13 +426,13 @@ class LoveDaysCounterState extends State<LoveDaysCounter>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _buildBox(units[0], "NĂM"),
+                                _buildBox(units[0], "YEAR"),
                                 const SizedBox(width: 10),
-                                _buildBox(units[1], "THÁNG"),
+                                _buildBox(units[1], "MONTH"),
                                 const SizedBox(width: 10),
-                                _buildBox(units[2], "TUẦN"),
+                                _buildBox(units[2], "WEEK"),
                                 const SizedBox(width: 10),
-                                _buildBox(units[3], "NGÀY"),
+                                _buildBox(units[3], "DAY"),
                               ],
                             ),
                             const SizedBox(height: 16),

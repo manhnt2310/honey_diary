@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+//import 'package:honey_diary/presentation/home/presentation/home_page.dart';
 import 'package:intl/intl.dart';
-import '../home/presentation/love_days_counter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../home/presentation/home_screen.dart';
 
 class StartController extends GetxController {
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
@@ -28,7 +30,7 @@ class StartController extends GetxController {
       );
       await prefs.setBool('hasSeenIntro', true);
 
-      Get.off(() => LoveDaysCounter(startDate: selectedDate.value!));
+      Get.offAll(() => HomeScreen(startDate: selectedDate.value!));
     }
   }
 

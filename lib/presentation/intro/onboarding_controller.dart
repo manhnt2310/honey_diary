@@ -21,7 +21,7 @@ class OnBoardingController extends GetxController {
   /// Update current index and Jump to next page
   void nextPage() {
     if (currentPageIndex.value == 2) {
-      Get.offAll(const StartScreen());
+      Get.offAll(() => const StartScreen());
       // Navigator.push(
       //   Get.context!,
       //   MaterialPageRoute(builder: (context) => const StartScreen()),

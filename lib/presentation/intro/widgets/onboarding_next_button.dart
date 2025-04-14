@@ -8,9 +8,7 @@ import '../../../shared/utils/helpers/helper_functions.dart';
 import '../onboarding_controller.dart';
 
 class OnBoardingNextButton extends StatelessWidget {
-  const OnBoardingNextButton({
-    super.key,
-  });
+  const OnBoardingNextButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,7 @@ class OnBoardingNextButton extends StatelessWidget {
           shape: const CircleBorder(),
           backgroundColor: dark ? MColors.primary : Colors.pinkAccent,
         ),
-        child: const Icon(Iconsax.arrow_right_3),
+        child: const Icon(Iconsax.arrow_right_3, color: Colors.white),
       ),
     );
   }
