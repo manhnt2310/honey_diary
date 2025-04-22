@@ -496,16 +496,21 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.cyan.shade100,
       appBar: AppBar(
-        title: const Text('Anniversary'),
+        title: const Text(
+          'Anniversary',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+        ),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
       body:
           _anniversaries.isEmpty
               ? const Center(
                 child: Text(
-                  'No anniversaries yet!',
+                  'Start journaling today.',
                   style: TextStyle(fontSize: 18),
                 ),
               )
@@ -573,7 +578,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8),
                             // Nội dung
                             if (item.content != null &&
                                 item.content!.isNotEmpty)
@@ -639,12 +643,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
             });
           }
         },
-        backgroundColor: const Color.fromARGB(
-          255,
-          245,
-          146,
-          179,
-        ), // Thay đổi màu sắc tại đây
+        backgroundColor: Colors.pink.shade200, // Thay đổi màu sắc tại đây
         shape: const CircleBorder(), // Đặt hình dạng là hình tròn
         child: const Icon(Icons.add, color: Colors.white),
       ),

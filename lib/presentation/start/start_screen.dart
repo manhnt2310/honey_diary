@@ -16,10 +16,14 @@ class StartScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Center(
+        title: Center(
           child: Text(
             "Please choose the date you started falling in love 💖",
-            style: TextStyle(fontSize: 20, color: Colors.pinkAccent),
+            style: TextStyle(
+              fontSize: 21,
+              color: Colors.pink[300],
+              fontWeight: FontWeight.bold,
+            ),
             maxLines: 2,
           ),
         ),
@@ -41,14 +45,15 @@ class StartScreen extends StatelessWidget {
                     color: Colors.black26,
                     blurRadius: 10,
                     offset: Offset(0, 5),
-                  )
+                  ),
                 ],
               ),
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image(
-                      image: AssetImage('lib/assets/gif/icons8-love (1).gif')),
+                    image: AssetImage('lib/assets/gif/icons8-love (1).gif'),
+                  ),
                   SizedBox(height: 10),
                   LoveTextDisplay(), // 🌟 Hiển thị ngày yêu
                   SizedBox(height: 20),

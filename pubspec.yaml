@@ -97,6 +97,13 @@ flutter:
     - lib/assets/icon/
     - lib/assets/json/
 
+  fonts:
+    - family: Lora
+      fonts:
+        - asset: lib/assets/font/Lora-Medium.ttf
+        - asset: lib/assets/font/Lora-Bold.ttf
+          weight: 700
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

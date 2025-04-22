@@ -36,7 +36,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Love Days Counter',
-      theme: ThemeData(primarySwatch: Colors.pink),
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        fontFamily: 'Lora',
+        textTheme: const TextTheme(),
+      ),
       home: firstScreen,
     );
   }

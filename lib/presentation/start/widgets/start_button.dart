@@ -15,18 +15,14 @@ class StartButton extends StatelessWidget {
       icon: const Icon(Icons.favorite_border, color: Colors.white),
       label: const Text(
         "Start",
-        style: TextStyle(fontSize: 19),
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepOrangeAccent,
+        // backgroundColor: Colors.deepOrangeAccent,
+        backgroundColor: Colors.cyan.shade600,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 20,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       ),
     );
   }

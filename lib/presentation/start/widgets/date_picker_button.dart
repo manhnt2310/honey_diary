@@ -12,7 +12,10 @@ class DatePickerButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () => controller.pickDate(context),
       icon: const Icon(Icons.calendar_today, color: Colors.white),
-      label: const Text("Select date", style: TextStyle(fontSize: 21)),
+      label: const Text(
+        "Select date",
+        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.pinkAccent,
         foregroundColor: Colors.white,

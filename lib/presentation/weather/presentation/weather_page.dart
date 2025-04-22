@@ -12,8 +12,9 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  final WeatherService _weatherService =
-      WeatherService('01caf1bb2f9a38b0f6df9497a204b2ea');
+  final WeatherService _weatherService = WeatherService(
+    '01caf1bb2f9a38b0f6df9497a204b2ea',
+  );
   Weather? _weather;
   String? _errorMessage;
 
@@ -71,7 +72,8 @@ class _WeatherPageState extends State<WeatherPage> {
   void _updateTime() {
     final now = DateTime.now();
     setState(() {
-      _currentTime = "${now.hour.toString().padLeft(2, '0')}:"
+      _currentTime =
+          "${now.hour.toString().padLeft(2, '0')}:"
           "${now.minute.toString().padLeft(2, '0')}:"
           "${now.second.toString().padLeft(2, '0')}";
     });
@@ -101,61 +103,53 @@ class _WeatherPageState extends State<WeatherPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Weather'),
+        title: const Text(
+          'Weather',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: Colors.transparent,
       ),
-      backgroundColor: const Color.fromARGB(255, 247, 207, 216),
+      backgroundColor: Colors.pink.shade100,
       body: Center(
-        child: _errorMessage != null
-            ? Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.black),
-              )
-            : _weather == null
+        child:
+            _errorMessage != null
+                ? Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.black),
+                )
+                : _weather == null
                 ? const CircularProgressIndicator()
                 : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Tên thành phố
-                      Text(
-                        _weather!.cityName,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          color: Colors.black,
-                        ),
-                      ),
-                      // Hiển thị thời gian hiện tại
-                      Text(
-                        _currentTime,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                      // Animation thời tiết
-                      Lottie.asset(
-                        getWeatherAnimation(_weather!.mainCondition),
-                        width: 200,
-                        height: 200,
-                      ),
-                      // Nhiệt độ
-                      Text(
-                        '${_weather!.temperature.round()}℃',
-                        style: const TextStyle(
-                          fontSize: 48,
-                          color: Colors.black,
-                        ),
-                      ),
-                      // Mô tả thời tiết
-                      Text(
-                        _weather!.mainCondition,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Tên thành phố
+                    Text(
+                      _weather!.cityName,
+                      style: const TextStyle(fontSize: 24, color: Colors.black),
+                    ),
+                    // Hiển thị thời gian hiện tại
+                    Text(
+                      _currentTime,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                    ),
+                    // Animation thời tiết
+                    Lottie.asset(
+                      getWeatherAnimation(_weather!.mainCondition),
+                      width: 200,
+                      height: 200,
+                    ),
+                    // Nhiệt độ
+                    Text(
+                      '${_weather!.temperature.round()}℃',
+                      style: const TextStyle(fontSize: 48, color: Colors.black),
+                    ),
+                    // Mô tả thời tiết
+                    Text(
+                      _weather!.mainCondition,
+                      style: const TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                  ],
+                ),
       ),
     );
   }

@@ -32,21 +32,20 @@ class OnboardingPape extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(
-                      height: MSizes.spaceBtwItems,
-                    ),
+                    const SizedBox(height: MSizes.spaceBtwItems),
                     Text(
                       subTitle,
                       style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black),
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],

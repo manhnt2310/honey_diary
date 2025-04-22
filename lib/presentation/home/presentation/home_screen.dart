@@ -167,7 +167,11 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
           const SizedBox(height: 5),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -346,9 +350,10 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('lib/assets/image/mountains.jpg'),
+                image: AssetImage('lib/assets/image/background.JPG'),
                 fit: BoxFit.cover,
               ),
+              // color: Color.fromARGB(255, 252, 198, 206),
             ),
           ),
 
@@ -579,7 +584,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                               'Male',
                               style: TextStyle(
                                 fontSize: 21,
-                                color: Color.fromARGB(255, 3, 125, 165),
+                                color: Color.fromARGB(255, 0, 88, 117),
                               ),
                             ),
                           ),
@@ -605,7 +610,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                       "${_ageMe!}",
                                       style: const TextStyle(
                                         fontSize: 17,
-                                        color: Colors.white,
+                                        color: Color.fromARGB(255, 0, 88, 117),
                                       ),
                                     ),
                                   ),
@@ -675,7 +680,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                               'Female',
                               style: TextStyle(
                                 fontSize: 21,
-                                color: Color.fromARGB(255, 246, 104, 125),
+                                color: Color.fromARGB(255, 248, 89, 113),
                               ),
                             ),
                           ),
@@ -700,7 +705,12 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                       "${_ageYou!}",
                                       style: const TextStyle(
                                         fontSize: 17,
-                                        color: Colors.white,
+                                        color: Color.fromARGB(
+                                          255,
+                                          248,
+                                          89,
+                                          113,
+                                        ),
                                       ),
                                     ),
                                   ),
