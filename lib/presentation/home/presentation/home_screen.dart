@@ -66,17 +66,25 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
     totalDays = now.difference(widget.startDate).inDays;
     double finalPercent = (totalDays % _cycleDays) / _cycleDays;
 
-    // Animation controller cho day & percent
+    // --- Tính duration động ---
+    const int msPerDay = 10; // mỗi ngày thêm 10 ms
+    const int minMs = 500; // tối thiểu 0.5 s
+    const int maxMs = 10000; // tối đa 10 s
+    final int computedMs = (totalDays * msPerDay).clamp(minMs, maxMs).toInt();
+
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: Duration(milliseconds: computedMs),
     );
+
+    // như cũ:
     _dayAnimation = IntTween(begin: 0, end: totalDays).animate(_controller)
       ..addListener(() => setState(() {}));
     _percentAnimation = Tween<double>(
       begin: 0.0,
       end: finalPercent,
     ).animate(_controller)..addListener(() => setState(() {}));
+
     _controller.forward();
 
     // Nhịp đập tim
@@ -387,7 +395,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                 'in love',
                                 style: TextStyle(
                                   fontSize: 23,
-                                  color: Colors.pink,
+                                  color: Colors.pinkAccent,
                                 ),
                               ),
                               Text(
@@ -401,7 +409,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                 'days',
                                 style: TextStyle(
                                   fontSize: 23,
-                                  color: Colors.pink,
+                                  color: Colors.pinkAccent,
                                 ),
                               ),
                             ],
