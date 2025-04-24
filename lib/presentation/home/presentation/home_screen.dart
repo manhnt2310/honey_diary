@@ -408,10 +408,11 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                           ),
                           linearGradient: const LinearGradient(
                             colors: [
-                              Colors.lightBlueAccent,
-                              Colors.lightBlue,
-                              Colors.blueAccent,
-                              Colors.blue,
+                              Color.fromARGB(255, 2, 167, 244),
+                              Color.fromARGB(255, 30, 176, 244),
+                              Color.fromARGB(255, 77, 191, 244),
+                              Color.fromARGB(255, 102, 202, 248),
+                              Color.fromARGB(255, 138, 214, 249),
                             ],
                           ),
                           circularStrokeCap: CircularStrokeCap.round,
@@ -609,7 +610,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                     child: Text(
                                       "${_ageMe!}",
                                       style: const TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 18,
                                         color: Color.fromARGB(255, 0, 88, 117),
                                       ),
                                     ),
@@ -627,7 +628,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                   child: Text(
                                     _zodiacSignMe,
                                     style: const TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 18,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -704,7 +705,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                     child: Text(
                                       "${_ageYou!}",
                                       style: const TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 18,
                                         color: Color.fromARGB(
                                           255,
                                           248,
@@ -727,7 +728,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                   child: Text(
                                     _zodiacSignYou,
                                     style: const TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 18,
                                       color: Colors.black,
                                     ),
                                   ),
