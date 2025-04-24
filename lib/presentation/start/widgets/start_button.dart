@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../start_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/start_bloc.dart';
+import '../bloc/start_event.dart';
+import '../bloc/start_state.dart';
 
 class StartButton extends StatelessWidget {
-  const StartButton({super.key}); // ✅ Thêm super.key vào constructor
+  const StartButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final StartController controller =
-        Get.find(); // ✅ Chuyển vào build để tránh lỗi khởi tạo sớm
-
-    return ElevatedButton.icon(
-      onPressed: controller.startCounter,
-      icon: const Icon(Icons.favorite_border, color: Colors.white),
-      label: const Text(
-        "Start",
-        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-      ),
-      style: ElevatedButton.styleFrom(
-        // backgroundColor: Colors.deepOrangeAccent,
-        backgroundColor: Colors.cyan.shade600,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      ),
+    return BlocBuilder<StartBloc, StartState>(
+      builder: (context, state) {
+        final isEnabled = state is StartInitial && state.selectedDate != null;
+        return ElevatedButton.icon(
+          onPressed:
+              isEnabled
+                  ? () => context.read<StartBloc>().add(const StartPressed())
+                  : null,
+          icon: const Icon(Icons.favorite_border, color: Colors.white),
+          label: const Text(
+            'Start',
+            style: TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.cyan.shade600,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          ),
+        );
+      },
     );
   }
 }
