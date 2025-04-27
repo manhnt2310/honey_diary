@@ -6,14 +6,14 @@ import 'package:http/http.dart' as http;
 
 class WeatherService {
   // Sử dụng HTTPS để đảm bảo bảo mật
-  static const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+  static const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
   final String apiKey;
 
   WeatherService(this.apiKey);
 
   Future<Weather> getWeather(String cityName) async {
     final response = await http.get(
-      Uri.parse('$BASE_URL?q=$cityName&appid=$apiKey&units=metric'),
+      Uri.parse('$baseUrl?q=$cityName&appid=$apiKey&units=metric'),
     );
 
     if (response.statusCode == 200) {
@@ -42,8 +42,10 @@ class WeatherService {
     );
 
     // Chuyển đổi vị trí thành placemark
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
 
     // Lấy tên thành phố từ placemark đầu tiên
     String? city = placemarks[0].locality;

@@ -5,7 +5,9 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
-import '../../diary/presentations/diary_screen.dart';
+
+import '../../diary/screens/diary_screen.dart';
+//import '../../diary/presentations/diary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final DateTime startDate;
@@ -636,7 +638,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                   child: Text(
                                     _zodiacSignMe,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -736,7 +738,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                   child: Text(
                                     _zodiacSignYou,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       color: Colors.black,
                                     ),
                                   ),

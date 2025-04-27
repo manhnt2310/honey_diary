@@ -39,7 +39,6 @@ class _WeatherPageState extends State<WeatherPage> {
       setState(() {
         _errorMessage = e.toString();
       });
-      print(e);
     }
   }
 

@@ -37,13 +37,4 @@ class DatabaseHelper {
       )
     ''');
   }
-
-  // Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-  //   if (oldVersion < 2) {
-  //     await db.execute('ALTER TABLE anniversaries ADD COLUMN content TEXT');
-  //   }
-  //   if (oldVersion < 3) {
-  //     await db.execute('ALTER TABLE anniversaries ADD COLUMN imagePaths TEXT');
-  //   }
-  // }
 }
