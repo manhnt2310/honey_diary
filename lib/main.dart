@@ -1,30 +1,40 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-//import 'package:honey_diary/presentation/home/presentation/home_page.dart';
-import 'package:honey_diary/presentation/home/presentation/home_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:honey_diary/core/utils/injections.dart';
+import 'presentation/diary/bloc/diary_bloc.dart';
+import 'presentation/diary/bloc/diary_event.dart';
 import 'presentation/intro/onboarding_screen.dart';
+import 'presentation/home/presentation/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
+  await initInjections();
 
-  // Kiem tra da vao man hinh Start lan dau chua
+  final prefs = await SharedPreferences.getInstance();
   bool hasSeenIntro = prefs.getBool('hasSeenIntro') ?? false;
-  String? savedDateString = prefs.getString('selectedDate');
+  String? savedDateStr = prefs.getString('selectedDate');
 
   Widget firstScreen;
-
-  if (hasSeenIntro && savedDateString != null) {
-    // Nếu đã lưu ngày, parse sang DateTime
-    DateTime startDate = DateTime.parse(savedDateString);
-    firstScreen = HomeScreen(startDate: startDate);
+  if (hasSeenIntro && savedDateStr != null) {
+    firstScreen = HomeScreen(startDate: DateTime.parse(savedDateStr));
   } else {
-    // Nếu chưa có ngày => show màn StartScreen
     firstScreen = const OnboardingScreen();
   }
 
-  runApp(MyApp(firstScreen: firstScreen));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        // Khởi tạo AnniversaryBloc và ngay lập tức load data
+        BlocProvider<DiaryBloc>(
+          create: (_) => sl<DiaryBloc>()..add(LoadAnniversariesEvent()),
+        ),
+      ],
+      child: MyApp(firstScreen: firstScreen),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -36,11 +46,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Love Days Counter',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        fontFamily: 'Lora',
-        textTheme: const TextTheme(),
-      ),
+      theme: ThemeData(primarySwatch: Colors.pink, fontFamily: 'Lora'),
       home: firstScreen,
     );
   }

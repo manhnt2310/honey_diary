@@ -10,6 +10,6 @@ class Anniversary {
     required this.title,
     required this.date,
     this.description,
-    this.imagePaths,
-  });
+    List<String>? imagePaths,
+  }) : imagePaths = imagePaths ?? [];
 }

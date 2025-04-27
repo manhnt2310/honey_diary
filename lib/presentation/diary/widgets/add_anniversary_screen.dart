@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/entities/anniversary.dart';
-import '../bloc/anniversary_bloc.dart';
-import '../bloc/anniversary_event.dart';
+import '../bloc/diary_bloc.dart';
+import '../bloc/diary_event.dart';
 
 class AddAnniversaryScreen extends StatefulWidget {
   const AddAnniversaryScreen({super.key});
@@ -73,9 +73,7 @@ class AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
                       imagePaths: [],
                       id: 0, // Giả sử không có ảnh trong ví dụ này
                     );
-                    context.read<AnniversaryBloc>().add(
-                      AddAnniversaryEvent(ann),
-                    );
+                    context.read<DiaryBloc>().add(AddAnniversaryEvent(ann));
                     Navigator.pop(context);
                   }
                 },

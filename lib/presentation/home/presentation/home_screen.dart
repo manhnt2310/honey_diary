@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 
-import '../../diary/screens/diary_screen.dart';
+import '../../diary/presentation/diary_page.dart';
 //import '../../diary/presentations/diary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -324,7 +324,18 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                   onPressed:
                       () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const DiaryScreen()),
+                        MaterialPageRoute(builder: (_) => const DiaryPage()),
+                        // MaterialPageRoute(
+                        //   builder:
+                        //       (_) => BlocProvider.value(
+                        //         value:
+                        //             context
+                        //                 .read<
+                        //                   DiaryBloc
+                        //                 >(), // nếu đã có một instance
+                        //         child: const DiaryScreen(),
+                        //       ),
+                        // ),
                       ),
                   icon: const Icon(Icons.menu_book_rounded),
                 ),

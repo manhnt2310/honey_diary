@@ -1,55 +1,19 @@
-// class RecordModel {
-//   final String id;
-//   final String imagePath;
-//   final String title;
-//   final String description;
-//   final DateTime date;
-
-//   RecordModel({
-//     required this.id,
-//     required this.imagePath,
-//     required this.title,
-//     required this.description,
-//     required this.date,
-//   });
-
-//   factory RecordModel.fromJson(Map<String, dynamic> json) {
-//     return RecordModel(
-//       id: json['id'],
-//       imagePath: json['imagePath'],
-//       title: json['title'],
-//       description: json['description'],
-//       date: DateTime.parse(json['date']),
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'id': id,
-//       'imagePath': imagePath,
-//       'title': title,
-//       'description': description,
-//       'date': date.toIso8601String(),
-//     };
-//   }
-// }
-
-// data/models/anniversary_model.dart
 import '../../domain/entities/anniversary.dart';
 
 class AnniversaryModel {
   final int id;
   final String title;
   final String dateString; // Lưu ngày dưới dạng String (ví dụ ISO8601)
-  final String? description;
-  final List<String>? imagePaths;
+  final String? content;
+  final String?
+  imagePathsString; // Lưu danh sách ảnh dưới dạng chuỗi (ví dụ: đường dẫn phân cách dấu phẩy) "path1, path2,..."
 
   AnniversaryModel({
     required this.id,
     required this.title,
     required this.dateString,
-    this.description,
-    this.imagePaths,
+    this.content,
+    this.imagePathsString,
   });
 
   // Chuyển từ entity sang model để lưu
@@ -58,8 +22,8 @@ class AnniversaryModel {
       id: ann.id,
       title: ann.title,
       dateString: ann.date.toIso8601String(),
-      description: ann.description,
-      imagePaths: ann.imagePaths,
+      content: ann.description,
+      imagePathsString: ann.imagePaths?.join(','),
     );
   }
 
@@ -69,8 +33,11 @@ class AnniversaryModel {
       id: id,
       title: title,
       date: DateTime.parse(dateString),
-      description: description,
-      imagePaths: imagePaths,
+      description: content,
+      imagePaths:
+          imagePathsString!.isEmpty
+              ? []
+              : imagePathsString?.split(',').map((s) => s.trim()).toList(),
     );
   }
 
@@ -80,8 +47,8 @@ class AnniversaryModel {
       id: map['id'] as int,
       title: map['title'] as String,
       dateString: map['date'] as String,
-      description: map['description'] as String?,
-      imagePaths: (map['imagePaths'] as String?)?.split(','),
+      content: map['content'] as String?,
+      imagePathsString: map['imagePaths'] as String? ?? '',
     );
   }
 
@@ -91,8 +58,8 @@ class AnniversaryModel {
       'id': id,
       'title': title,
       'date': dateString,
-      'description': description,
-      'imagePaths': imagePaths?.join(','),
+      'content': content,
+      'imagePaths': imagePathsString ?? '',
     };
   }
 }

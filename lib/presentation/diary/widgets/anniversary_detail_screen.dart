@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/entities/anniversary.dart';
-import '../bloc/anniversary_bloc.dart';
-import '../bloc/anniversary_event.dart';
+import '../bloc/diary_bloc.dart';
+import '../bloc/diary_event.dart';
 
 class AnniversaryDetailScreen extends StatelessWidget {
   final Anniversary anniversary;
@@ -19,7 +19,7 @@ class AnniversaryDetailScreen extends StatelessWidget {
             icon: const Icon(Icons.delete),
             onPressed: () {
               // Gửi event xóa và quay lại màn hình trước
-              context.read<AnniversaryBloc>().add(
+              context.read<DiaryBloc>().add(
                 DeleteAnniversaryEvent(anniversary.id),
               );
               Navigator.pop(context);

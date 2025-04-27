@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../shared/utils/helpers/database_helper.dart';
-import 'add_anniversary_screen.dart';
-import 'anniversary_detail_screen.dart';
+import '../../anniversary_addition/add_anniversary_screen.dart';
+import '../../anniversary_detail/anniversary_detail_screen.dart';
 
 class Anniversary {
   final int? id; // id trong DB (có thể null khi chưa lưu)

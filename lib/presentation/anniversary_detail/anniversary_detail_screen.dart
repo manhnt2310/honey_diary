@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'add_anniversary_screen.dart';
-import 'diary_screen.dart';
+import '../anniversary_addition/add_anniversary_screen.dart';
+import '../diary/presentation/diary_screen.dart';
 
 class AnniversaryDetailScreen extends StatefulWidget {
   final Anniversary anniversary;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../diary/presentations/diary_screen.dart';
+import '../../diary/presentation/diary_screen.dart';
 import '../../weather/presentation/weather_page.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
