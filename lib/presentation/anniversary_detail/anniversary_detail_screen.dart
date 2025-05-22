@@ -202,7 +202,8 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
                     _formattedDate,
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Colors.blueGrey,
+                      color: Color.fromARGB(255, 42, 191, 255),
+                      fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),

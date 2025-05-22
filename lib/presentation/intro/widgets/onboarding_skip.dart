@@ -5,9 +5,7 @@ import '../../../shared/utils/device/device_utility.dart';
 import '../onboarding_controller.dart';
 
 class OnboardingSkip extends StatelessWidget {
-  const OnboardingSkip({
-    super.key,
-  });
+  const OnboardingSkip({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class OnboardingSkip extends StatelessWidget {
       right: MSizes.defaultSpace,
       child: TextButton(
         onPressed: () => OnBoardingController.instance.skipPage(),
-        child: const Text('Skip'),
+        child: const Text('Skip', style: TextStyle(color: Colors.black)),
       ),
     );
   }

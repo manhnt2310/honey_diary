@@ -60,6 +60,9 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   int? _ageMe;
   int? _ageYou;
 
+  String _nameMe = "Male";
+  String _nameYou = "Female";
+
   @override
   void initState() {
     super.initState();
@@ -109,7 +112,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
         setState(() => _currentPage = next);
       }
     });
-
+    _loadSavedNames();
     _loadSavedBirthDates();
   }
 
@@ -189,6 +192,67 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
     );
   }
 
+  Future<void> _loadSavedNames() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nameMe = prefs.getString('nameMe') ?? _nameMe;
+      _nameYou = prefs.getString('nameYou') ?? _nameYou;
+    });
+  }
+
+  Future<void> _saveName(bool isMe, String val) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(isMe ? 'nameMe' : 'nameYou', val);
+  }
+
+  void _editName(bool isMe) {
+    final controller = TextEditingController(text: isMe ? _nameMe : _nameYou);
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: Text(
+              isMe ? 'Edit Name' : 'Edit Name',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.lightBlueAccent,
+              ),
+            ),
+            content: TextField(controller: controller),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.pinkAccent),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final newName = controller.text.trim();
+                  if (newName.isNotEmpty) {
+                    setState(() {
+                      if (isMe) {
+                        _nameMe = newName;
+                      } else {
+                        _nameYou = newName;
+                      }
+                    });
+                    _saveName(isMe, newName);
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Save',
+                  style: TextStyle(color: Colors.pinkAccent),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
   Future<void> _loadSavedBirthDates() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -262,7 +326,10 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                   final key = isMe ? 'birthDateMe' : 'birthDateYou';
                   await prefs.setString(key, tempPicked.toIso8601String());
                 },
-                child: const Text('Done'),
+                child: const Text(
+                  'Done',
+                  style: TextStyle(color: Color.fromARGB(255, 76, 201, 255)),
+                ),
               ),
             ],
           ),
@@ -319,8 +386,30 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Chưa có chức năng
             Row(
               children: [
+                // IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.edit_outlined),
+                // ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.favorite, color: Colors.white),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                IconButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const WeatherPage()),
+                      ),
+                  icon: const Icon(Icons.cloud_outlined, color: Colors.white),
+                ),
                 IconButton(
                   onPressed:
                       () => Navigator.push(
@@ -338,29 +427,11 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                         //       ),
                         // ),
                       ),
-                  icon: const Icon(Icons.menu_book_rounded),
+                  icon: const Icon(
+                    Icons.menu_book_rounded,
+                    color: Colors.white,
+                  ),
                 ),
-                IconButton(
-                  onPressed:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const WeatherPage()),
-                      ),
-                  icon: const Icon(Icons.cloud_outlined),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.mode_edit_outline),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.camera_alt),
-                ),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
               ],
             ),
           ],
@@ -594,20 +665,23 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                           ),
                           const SizedBox(height: 8),
                           // Label
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: .6),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Male',
-                              style: TextStyle(
-                                fontSize: 21,
-                                color: Color.fromARGB(255, 0, 88, 117),
+                          GestureDetector(
+                            onTap: () => _editName(true),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: .6),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _nameMe,
+                                style: const TextStyle(
+                                  fontSize: 21,
+                                  color: Color.fromARGB(255, 0, 88, 117),
+                                ),
                               ),
                             ),
                           ),
@@ -690,20 +764,23 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: .6),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Female',
-                              style: TextStyle(
-                                fontSize: 21,
-                                color: Color.fromARGB(255, 248, 89, 113),
+                          GestureDetector(
+                            onTap: () => _editName(false),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: .6),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _nameYou,
+                                style: const TextStyle(
+                                  fontSize: 21,
+                                  color: Color.fromARGB(255, 248, 89, 113),
+                                ),
                               ),
                             ),
                           ),

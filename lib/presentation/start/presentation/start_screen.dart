@@ -33,7 +33,18 @@ class StartScreen extends StatelessWidget {
         ),
         body: Stack(
           children: [
-            Container(color: Colors.cyan.shade200),
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 86, 203, 253),
+                    Color.fromARGB(255, 209, 240, 255),
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
+              ),
+            ),
             Center(
               child: Container(
                 padding: const EdgeInsets.all(20),

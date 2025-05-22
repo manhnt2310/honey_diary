@@ -8,9 +8,7 @@ import '../../../shared/utils/helpers/helper_functions.dart';
 import '../onboarding_controller.dart';
 
 class OnBoardingDotNavigation extends StatelessWidget {
-  const OnBoardingDotNavigation({
-    super.key,
-  });
+  const OnBoardingDotNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,10 @@ class OnBoardingDotNavigation extends StatelessWidget {
         onDotClicked: controller.dotNavigationClick,
         count: 3,
         effect: ExpandingDotsEffect(
-            activeDotColor: dark ? MColors.light : MColors.error, dotHeight: 6),
+          activeDotColor:
+              dark ? MColors.light : const Color.fromARGB(255, 76, 201, 255),
+          dotHeight: 6,
+        ),
       ),
     );
   }

@@ -164,8 +164,19 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
           children: [
             ElevatedButton.icon(
               onPressed: _pickImages,
-              icon: const Icon(Icons.photo_library),
-              label: const Text('Select Photos'),
+              icon: const Icon(
+                Icons.photo_library,
+                color: Color.fromARGB(255, 42, 191, 255),
+                size: 20,
+              ),
+              label: const Text(
+                'Select Photos',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 42, 191, 255),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             if (_selectedImages.isNotEmpty) ...[
