@@ -23,7 +23,7 @@ class OnBoardingNextButton extends StatelessWidget {
           shape: const CircleBorder(),
           backgroundColor: dark ? MColors.primary : Colors.pinkAccent,
         ),
-        child: const Icon(Iconsax.arrow_right_3, color: Colors.white),
+        child: const Icon(Iconsax.arrow_right_3, color: Colors.white, size: 23),
       ),
     );
   }

@@ -32,7 +32,7 @@ class OnboardingPape extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 22,
+                        fontSize: 23,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -42,7 +42,7 @@ class OnboardingPape extends StatelessWidget {
                     Text(
                       subTitle,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.normal,
                         color: Colors.black,
                       ),
