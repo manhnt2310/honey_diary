@@ -92,11 +92,34 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Detail'),
+        title: const Text(
+          'Diary',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 22, 185, 254),
+                Color.fromARGB(255, 111, 207, 255),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: [
-          IconButton(icon: const Icon(Icons.edit), onPressed: _editAnniversary),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.edit_outlined, color: Colors.white),
+            onPressed: _editAnniversary,
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.white),
             onPressed: _deleteAnniversary,
           ),
         ],
@@ -203,7 +226,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _popWithUpdatedAnniversary,
-        backgroundColor: const Color.fromARGB(255, 245, 146, 179),
+        backgroundColor: Colors.pinkAccent,
         shape: const CircleBorder(),
         child: const Icon(Icons.check, color: Colors.white),
       ),

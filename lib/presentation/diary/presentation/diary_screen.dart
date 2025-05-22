@@ -58,6 +58,8 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   final List<Anniversary> _anniversaries = [];
 
   @override
@@ -496,52 +498,124 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.cyan.shade100,
-      appBar: AppBar(
-        title: const Text(
-          'Anniversary',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 76, 201, 255),
+              Color.fromARGB(255, 209, 240, 255),
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+          ),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      body:
-          _anniversaries.isEmpty
-              ? const Center(
-                child: Text(
-                  'Start journaling today.',
-                  style: TextStyle(fontSize: 18),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              title: const Text(
+                'My Diary',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 26,
+                ),
+              ),
+              centerTitle: false,
+              elevation: 0,
+              backgroundColor: const Color.fromARGB(255, 76, 201, 255),
+              floating: true,
+              snap: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white, size: 28),
+                  tooltip: 'Add Anniversary',
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AddAnniversaryScreen(),
+                      ),
+                    );
+                    if (result is Anniversary) {
+                      final newId = await _insertAnniversary(result);
+                      setState(() {
+                        _anniversaries.add(result.copyWith(id: newId));
+                        _anniversaries.sort((a, b) => b.date.compareTo(a.date));
+                      });
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.home_filled,
+                    color: Colors.white,
+                    size: 23,
+                  ),
+                  tooltip: 'Home',
+                  onPressed: () => Navigator.pop(context), // về trang trước
+                ),
+              ],
+            ),
+            if (_anniversaries.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.menu_book_rounded,
+                        size: 72,
+                        color: Colors.pink.shade200,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Welcome to the Diary!',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pinkAccent.shade100,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Start logging your special days.',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               )
-              : ListView.builder(
-                padding: const EdgeInsets.all(12),
-                itemCount: _anniversaries.length,
-                itemBuilder: (context, index) {
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
                   final item = _anniversaries[index];
                   final dateString = DateFormat(
                     'EEEE, MMM d',
                   ).format(item.date);
-
                   return GestureDetector(
                     onTap: () async {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) =>
-                                  AnniversaryDetailScreen(anniversary: item),
+                              (_) => AnniversaryDetailScreen(anniversary: item),
                         ),
                       );
-
                       if (result is Anniversary) {
                         await _updateAnniversary(result);
                         setState(() {
-                          final idx = _anniversaries.indexWhere(
-                            (ann) => ann.id == item.id,
+                          final i = _anniversaries.indexWhere(
+                            (a) => a.id == item.id,
                           );
-                          if (idx != -1) {
-                            _anniversaries[idx] = result;
+                          if (i != -1) {
+                            _anniversaries[i] = result;
                             _anniversaries.sort(
                               (a, b) => b.date.compareTo(a.date),
                             );
@@ -549,16 +623,18 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         });
                       } else if (result == 'deleted') {
                         await _deleteAnniversary(item);
-                        setState(() {
-                          _anniversaries.removeWhere(
-                            (ann) => ann.id == item.id,
-                          );
-                        });
+                        setState(
+                          () => _anniversaries.removeWhere(
+                            (a) => a.id == item.id,
+                          ),
+                        );
                       }
                     },
                     child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      color: Colors.white,
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -567,10 +643,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Collage ảnh
                             _buildCollage(item.imagePaths),
                             const SizedBox(height: 12),
-                            // Tiêu đề
                             Text(
                               item.title,
                               style: const TextStyle(
@@ -578,7 +652,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            // Nội dung
                             if (item.content != null &&
                                 item.content!.isNotEmpty)
                               Padding(
@@ -605,17 +678,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                   ),
                                 ),
                               ),
-
-                            // const SizedBox(height: 4),
                             const Divider(color: Colors.grey, thickness: 1),
-                            //const SizedBox(height: 4),
-                            // Ngày
                             Text(
                               dateString,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey.shade700,
-                                //fontStyle: FontStyle.italic,
                               ),
                             ),
                           ],
@@ -623,32 +691,11 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       ),
                     ),
                   );
-                },
+                }, childCount: _anniversaries.length),
               ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddAnniversaryScreen(),
-            ),
-          );
-
-          if (result != null && result is Anniversary) {
-            final newId = await _insertAnniversary(result);
-            setState(() {
-              final newItem = result.copyWith(id: newId);
-              _anniversaries.add(newItem);
-              _anniversaries.sort((a, b) => b.date.compareTo(a.date));
-            });
-          }
-        },
-        backgroundColor: Colors.pink.shade200, // Thay đổi màu sắc tại đây
-        shape: const CircleBorder(), // Đặt hình dạng là hình tròn
-        child: const Icon(Icons.add, color: Colors.white),
+          ],
+        ),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerFloat, // Căn giữa nút
     );
   }
 }

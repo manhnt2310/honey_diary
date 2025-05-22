@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../domain/entities/anniversary.dart';
-import '../../anniversary_addition/add_anniversary_screen.dart';
+//import '../../../domain/entities/anniversary.dart';
+//import '../../anniversary_addition/add_anniversary_screen.dart';
 import '../bloc/diary_bloc.dart';
 import '../bloc/diary_state.dart';
 
@@ -140,9 +140,7 @@ class _DiaryViewState extends State<DiaryView> {
                       Icons.chevron_right,
                       color: Colors.pinkAccent,
                     ),
-                    onTap: () {
-                      // TODO: navigate to detail
-                    },
+                    onTap: () {},
                   ),
                 );
               },
@@ -155,12 +153,12 @@ class _DiaryViewState extends State<DiaryView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddAnniversaryScreen(),
-            ),
-          );
+          // final result = await Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const AddAnniversaryScreen(),
+          //   ),
+          // );
 
           // if (result != null && result is Anniversary) {
           //   final newId = await _insertAnniversary(result);

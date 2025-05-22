@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:honey_diary/presentation/diary/presentation/diary_screen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 
-import '../../diary/presentation/diary_page.dart';
+//import '../../diary/presentation/diary_page.dart';
 //import '../../diary/presentations/diary_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -324,7 +325,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                   onPressed:
                       () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const DiaryPage()),
+                        MaterialPageRoute(builder: (_) => const DiaryScreen()),
                         // MaterialPageRoute(
                         //   builder:
                         //       (_) => BlocProvider.value(

@@ -124,12 +124,37 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
     final dateString = DateFormat("d/M/yyyy").format(_selectedDate);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.lightBlueAccent.withValues(alpha: .7),
-        title: const Text('Add Anniversary'),
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 22, 185, 254),
+                Color.fromARGB(255, 111, 207, 255),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: const Text(
+          'Add Diary',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 23,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           IconButton(
             onPressed: _saveAnniversary,
-            icon: const Icon(Icons.check, color: Colors.pinkAccent),
+            icon: const Icon(Icons.check, color: Colors.white, size: 27),
           ),
         ],
       ),
