@@ -79,7 +79,7 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
                   onPressed: () => Navigator.of(ctx).pop(),
                   child: const Text(
                     'Done',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Color.fromARGB(255, 22, 185, 254)),
                   ),
                 ),
               ],

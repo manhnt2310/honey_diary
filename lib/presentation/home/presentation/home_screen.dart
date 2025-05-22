@@ -707,6 +707,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                       "${_ageMe!}",
                                       style: const TextStyle(
                                         fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                         color: Color.fromARGB(255, 0, 88, 117),
                                       ),
                                     ),
@@ -725,6 +726,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                     _zodiacSignMe,
                                     style: const TextStyle(
                                       fontSize: 17,
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
                                   ),
@@ -805,6 +807,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                       "${_ageYou!}",
                                       style: const TextStyle(
                                         fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                         color: Color.fromARGB(
                                           255,
                                           248,
@@ -828,6 +831,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                                     _zodiacSignYou,
                                     style: const TextStyle(
                                       fontSize: 17,
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
                                   ),
