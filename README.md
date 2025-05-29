@@ -1,16 +1,67 @@
 # honey_diary
 
-A new Flutter project.
+A cross-platform personal diary app built with Flutter.  
+Record your thoughts, moods, photos, and keep a private digital journal that runs on Android, iOS, Web, Windows, macOS, and Linux.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Table of Contents
 
-A few resources to get you started if this is your first Flutter project:
+1. [Project Overview](#project-overview)  
+2. [Features](#features)  
+3. [Architecture & Project Structure](#architecture--project-structure)  
+4. [Technology Stack](#technology-stack)  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Project Overview
+
+**honey_diary** is a beginner-friendly Flutter application scaffold designed for recording diary entries.  
+This project demonstrates how to:
+
+- Structure a Flutter codebase for multiple platforms  
+- Manage dependencies via `pubspec.yaml`  
+
+---
+
+## Features
+
+> _(Customize this list as you implement more features.)_
+
+- Create, read, update, and delete (CRUD) diary entries  
+- Attach photos to entries  
+- Calendar view to browse by date  
+- Secure local storage (SQLite, Share Preferences)   
+
+---
+
+## Architecture & Project Structure
+
+
+Key architectural decisions:
+
+- **Layered structure**:  
+  - **Models** hold plain Dart data classes.  
+  - **Services** (e.g., `StorageService`) abstract away database or local-storage logic.  
+  - **UI** in `screens/` and `widgets/` stays decoupled from data storage.  
+- **State management**: Provider, BLoC.  
+- **Routing**: Flutter’s built-in `Navigator` or a package like [go_router] for nested routes.  
+
+---
+
+## Technology Stack
+
+- **Flutter SDK** — v3.x or above  
+- **Dart** — language for Flutter apps  
+- **Platform Embeddings**  
+  - **Android**: Kotlin + Gradle  
+  - **iOS/macOS**: Swift + Xcode  
+  - **Windows/Linux**: CMake + C++  
+- **Dependencies** (as declared in `pubspec.yaml`)  
+  - State management: Provider/BLoC 
+  - Local storage: sqflite/share preference
+  - Image handling: `image_picker`  
+  - Date/Time: `intl`  
+  - (…and more—see `pubspec.yaml`)
+
+---
