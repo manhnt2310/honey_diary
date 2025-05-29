@@ -45,7 +45,7 @@ Key architectural decisions:
   - **Services** (e.g., `StorageService`) abstract away database or local-storage logic.  
   - **UI** in `screens/` and `widgets/` stays decoupled from data storage.  
 - **State management**: Provider, BLoC.  
-- **Routing**: Flutter’s built-in `Navigator` or a package like [go_router] for nested routes.  
+- **Routing**: Flutter’s built-in `Navigator`.  
 
 ---
 
