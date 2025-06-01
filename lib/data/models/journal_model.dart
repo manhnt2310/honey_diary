@@ -1,6 +1,6 @@
-import '../../domain/entities/anniversary.dart';
+import '../../domain/entities/journal.dart';
 
-class AnniversaryModel {
+class JournalModel {
   final int id;
   final String title;
   final String dateString; // Lưu ngày dưới dạng String (ví dụ ISO8601)
@@ -8,7 +8,7 @@ class AnniversaryModel {
   final String?
   imagePathsString; // Lưu danh sách ảnh dưới dạng chuỗi (ví dụ: đường dẫn phân cách dấu phẩy) "path1, path2,..."
 
-  AnniversaryModel({
+  JournalModel({
     required this.id,
     required this.title,
     required this.dateString,
@@ -17,8 +17,8 @@ class AnniversaryModel {
   });
 
   // Chuyển từ entity sang model để lưu
-  factory AnniversaryModel.fromEntity(Anniversary ann) {
-    return AnniversaryModel(
+  factory JournalModel.fromEntity(Journal ann) {
+    return JournalModel(
       id: ann.id,
       title: ann.title,
       dateString: ann.date.toIso8601String(),
@@ -28,8 +28,8 @@ class AnniversaryModel {
   }
 
   // Chuyển từ model sang entity sau khi đọc từ DB
-  Anniversary toEntity() {
-    return Anniversary(
+  Journal toEntity() {
+    return Journal(
       id: id,
       title: title,
       date: DateTime.parse(dateString),
@@ -42,8 +42,8 @@ class AnniversaryModel {
   }
 
   // Chuyển từ Map (DB) sang model
-  factory AnniversaryModel.fromMap(Map<String, dynamic> map) {
-    return AnniversaryModel(
+  factory JournalModel.fromMap(Map<String, dynamic> map) {
+    return JournalModel(
       id: map['id'] as int,
       title: map['title'] as String,
       dateString: map['date'] as String,

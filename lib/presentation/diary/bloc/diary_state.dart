@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/anniversary.dart';
+import '../../../domain/entities/journal.dart';
 
 abstract class DiaryState extends Equatable {
   const DiaryState();
@@ -12,15 +12,15 @@ class DiaryInitial extends DiaryState {}
 class DiaryLoading extends DiaryState {}
 
 class DiaryLoaded extends DiaryState {
-  final List<Anniversary> anniversaries;
-  const DiaryLoaded(this.anniversaries);
+  final List<Journal> journals;
+  const DiaryLoaded(this.journals);
 
   @override
-  List<Object?> get props => [anniversaries];
+  List<Object?> get props => [journals];
 }
 
 /// Dùng chung cho Add/Update/Delete thành công
-class AnniversaryOperationSuccess extends DiaryState {}
+class JournalOperationSuccess extends DiaryState {}
 
 class DiaryError extends DiaryState {
   final String message;

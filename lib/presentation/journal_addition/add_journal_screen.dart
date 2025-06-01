@@ -5,15 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../diary/presentation/diary_screen.dart';
 
-class AddAnniversaryScreen extends StatefulWidget {
-  final Anniversary? anniversary;
-  const AddAnniversaryScreen({super.key, this.anniversary});
+class AddJournalScreen extends StatefulWidget {
+  final Journal? journal;
+  const AddJournalScreen({super.key, this.journal});
 
   @override
-  State<AddAnniversaryScreen> createState() => _AddAnniversaryScreenState();
+  State<AddJournalScreen> createState() => _AddJournalScreenState();
 }
 
-class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
+class _AddJournalScreenState extends State<AddJournalScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
@@ -25,11 +25,11 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.anniversary != null) {
-      _titleController.text = widget.anniversary!.title;
-      _selectedDate = widget.anniversary!.date;
-      _contentController.text = widget.anniversary!.content ?? '';
-      _selectedImages = widget.anniversary!.imagePaths;
+    if (widget.journal != null) {
+      _titleController.text = widget.journal!.title;
+      _selectedDate = widget.journal!.date;
+      _contentController.text = widget.journal!.content ?? '';
+      _selectedImages = widget.journal!.imagePaths;
     }
     _pageController.addListener(() {
       setState(() {
@@ -88,7 +88,7 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
     );
   }
 
-  void _saveAnniversary() {
+  void _saveJournal() {
     if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -96,11 +96,11 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
       return;
     }
 
-    Anniversary newAnniversary;
-    if (widget.anniversary != null) {
+    Journal newJournal;
+    if (widget.journal != null) {
       // Edit mode: tạo đối tượng mới với id được giữ lại
-      newAnniversary = Anniversary(
-        id: widget.anniversary!.id,
+      newJournal = Journal(
+        id: widget.journal!.id,
         title: _titleController.text.trim(),
         date: _selectedDate,
         imagePaths: _selectedImages,
@@ -108,7 +108,7 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
       );
     } else {
       // Thêm mới
-      newAnniversary = Anniversary(
+      newJournal = Journal(
         title: _titleController.text.trim(),
         date: _selectedDate,
         imagePaths: _selectedImages,
@@ -116,7 +116,7 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
       );
     }
 
-    Navigator.pop(context, newAnniversary);
+    Navigator.pop(context, newJournal);
   }
 
   @override
@@ -153,7 +153,7 @@ class _AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _saveAnniversary,
+            onPressed: _saveJournal,
             icon: const Icon(Icons.check, color: Colors.white, size: 27),
           ),
         ],

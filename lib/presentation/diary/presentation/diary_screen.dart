@@ -4,17 +4,17 @@ import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../shared/utils/helpers/database_helper.dart';
-import '../../anniversary_addition/add_anniversary_screen.dart';
-import '../../anniversary_detail/anniversary_detail_screen.dart';
+import '../../journal_addition/add_journal_screen.dart';
+import '../../journal_detail/journal_detail_screen.dart';
 
-class Anniversary {
+class Journal {
   final int? id; // id trong DB (có thể null khi chưa lưu)
   final String title; // tiêu đề
   final DateTime date; // ngày kỷ niệm
   final List<String> imagePaths; // danh sách đường dẫn ảnh
   final String? content; // nội dung nhật ký
 
-  Anniversary({
+  Journal({
     this.id,
     required this.title,
     required this.date,
@@ -22,14 +22,14 @@ class Anniversary {
     this.content,
   }) : imagePaths = imagePaths ?? [];
 
-  Anniversary copyWith({
+  Journal copyWith({
     int? id,
     String? title,
     DateTime? date,
     List<String>? imagePaths,
     String? content,
   }) {
-    return Anniversary(
+    return Journal(
       id: id ?? this.id,
       title: title ?? this.title,
       date: date ?? this.date,
@@ -60,34 +60,34 @@ class DiaryScreen extends StatefulWidget {
 class _DiaryScreenState extends State<DiaryScreen> {
   final ScrollController _scrollController = ScrollController();
 
-  final List<Anniversary> _anniversaries = [];
+  final List<Journal> _journals = [];
 
   @override
   void initState() {
     super.initState();
-    _loadAnniversariesFromDB();
+    _loadJournalsFromDB();
   }
 
-  Future<void> _loadAnniversariesFromDB() async {
-    final data = await _getAllAnniversaries();
+  Future<void> _loadJournalsFromDB() async {
+    final data = await _getAllJournals();
     setState(() {
-      _anniversaries.clear();
-      _anniversaries.addAll(data);
+      _journals.clear();
+      _journals.addAll(data);
       // Sắp xếp từ mới nhất đến cũ nhất
-      _anniversaries.sort((a, b) => b.date.compareTo(a.date));
+      _journals.sort((a, b) => b.date.compareTo(a.date));
     });
   }
 
-  Future<List<Anniversary>> _getAllAnniversaries() async {
+  Future<List<Journal>> _getAllJournals() async {
     final db = await DatabaseHelper.instance.database;
-    final result = await db.query('anniversaries', orderBy: 'date ASC');
+    final result = await db.query('journals', orderBy: 'date ASC');
 
     return result.map((row) {
-      return Anniversary(
+      return Journal(
         id: row['id'] as int?,
         title: row['title'] as String,
         date: DateTime.fromMillisecondsSinceEpoch(row['date'] as int),
-        imagePaths: Anniversary.decodeImagePaths(
+        imagePaths: Journal.decodeImagePaths(
           row['imagePaths'] as String? ?? row['imagePath'] as String?,
         ),
         content: row['content'] as String?,
@@ -95,9 +95,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }).toList();
   }
 
-  Future<int> _insertAnniversary(Anniversary ann) async {
+  Future<int> _insertJournal(Journal ann) async {
     final db = await DatabaseHelper.instance.database;
-    return await db.insert('anniversaries', {
+    return await db.insert('journals', {
       'title': ann.title,
       'date': ann.date.millisecondsSinceEpoch,
       'imagePaths':
@@ -106,10 +106,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
     });
   }
 
-  Future<int> _updateAnniversary(Anniversary ann) async {
+  Future<int> _updateJournal(Journal ann) async {
     final db = await DatabaseHelper.instance.database;
     return await db.update(
-      'anniversaries',
+      'journals',
       {
         'title': ann.title,
         'date': ann.date.millisecondsSinceEpoch,
@@ -121,13 +121,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
   }
 
-  Future<int> _deleteAnniversary(Anniversary ann) async {
+  Future<int> _deleteJournal(Journal ann) async {
     final db = await DatabaseHelper.instance.database;
-    return await db.delete(
-      'anniversaries',
-      where: 'id = ?',
-      whereArgs: [ann.id],
-    );
+    return await db.delete('journals', where: 'id = ?', whereArgs: [ann.id]);
   }
 
   // Xây dựng collage ảnh theo kiểu “post”
@@ -531,19 +527,19 @@ class _DiaryScreenState extends State<DiaryScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.add, color: Colors.white, size: 28),
-                  tooltip: 'Add Anniversary',
+                  tooltip: 'Add Journal',
                   onPressed: () async {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const AddAnniversaryScreen(),
+                        builder: (_) => const AddJournalScreen(),
                       ),
                     );
-                    if (result is Anniversary) {
-                      final newId = await _insertAnniversary(result);
+                    if (result is Journal) {
+                      final newId = await _insertJournal(result);
                       setState(() {
-                        _anniversaries.add(result.copyWith(id: newId));
-                        _anniversaries.sort((a, b) => b.date.compareTo(a.date));
+                        _journals.add(result.copyWith(id: newId));
+                        _journals.sort((a, b) => b.date.compareTo(a.date));
                       });
                     }
                   },
@@ -559,7 +555,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 ),
               ],
             ),
-            if (_anniversaries.isEmpty)
+            if (_journals.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
@@ -595,7 +591,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
             else
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  final item = _anniversaries[index];
+                  final item = _journals[index];
                   final dateString = DateFormat(
                     'EEEE, MMM d',
                   ).format(item.date);
@@ -604,29 +600,24 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (_) => AnniversaryDetailScreen(anniversary: item),
+                          builder: (_) => JournalDetailScreen(journal: item),
                         ),
                       );
-                      if (result is Anniversary) {
-                        await _updateAnniversary(result);
+                      if (result is Journal) {
+                        await _updateJournal(result);
                         setState(() {
-                          final i = _anniversaries.indexWhere(
+                          final i = _journals.indexWhere(
                             (a) => a.id == item.id,
                           );
                           if (i != -1) {
-                            _anniversaries[i] = result;
-                            _anniversaries.sort(
-                              (a, b) => b.date.compareTo(a.date),
-                            );
+                            _journals[i] = result;
+                            _journals.sort((a, b) => b.date.compareTo(a.date));
                           }
                         });
                       } else if (result == 'deleted') {
-                        await _deleteAnniversary(item);
+                        await _deleteJournal(item);
                         setState(
-                          () => _anniversaries.removeWhere(
-                            (a) => a.id == item.id,
-                          ),
+                          () => _journals.removeWhere((a) => a.id == item.id),
                         );
                       }
                     },
@@ -691,7 +682,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       ),
                     ),
                   );
-                }, childCount: _anniversaries.length),
+                }, childCount: _journals.length),
               ),
           ],
         ),

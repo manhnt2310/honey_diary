@@ -13,10 +13,10 @@ class DiaryPage extends StatelessWidget {
     return BlocProvider(
       create:
           (context) => DiaryBloc(
-            getAllAnniversaries: sl(),
-            addAnniversary: sl(),
-            updateAnniversary: sl(),
-            deleteAnniversary: sl(),
+            getAllJournals: sl(),
+            addJournal: sl(),
+            updateJournal: sl(),
+            deleteJournal: sl(),
           ),
       child: const DiaryView(),
     );
