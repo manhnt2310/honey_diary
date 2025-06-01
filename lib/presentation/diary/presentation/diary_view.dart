@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-//import '../../../domain/entities/anniversary.dart';
-//import '../../anniversary_addition/add_anniversary_screen.dart';
+//import '../../../domain/entities/journal.dart';
+//import '../../journal_addition/add_journal_screen.dart';
 import '../bloc/diary_bloc.dart';
 import '../bloc/diary_state.dart';
 
@@ -88,9 +88,9 @@ class _DiaryViewState extends State<DiaryView> {
           }
 
           if (state is DiaryLoaded) {
-            final list = state.anniversaries;
+            final list = state.journals;
             if (list.isEmpty) {
-              return const Center(child: Text('No anniversaries yet.'));
+              return const Center(child: Text('No journals yet.'));
             }
 
             // Danh sách dưới dạng Card
@@ -156,16 +156,16 @@ class _DiaryViewState extends State<DiaryView> {
           // final result = await Navigator.push(
           //   context,
           //   MaterialPageRoute(
-          //     builder: (context) => const AddAnniversaryScreen(),
+          //     builder: (context) => const AddJournalScreen(),
           //   ),
           // );
 
-          // if (result != null && result is Anniversary) {
-          //   final newId = await _insertAnniversary(result);
+          // if (result != null && result is Journal) {
+          //   final newId = await _insertJournal(result);
           //   setState(() {
           //     final newItem = result.copyWith(id: newId);
-          //     _anniversaries.add(newItem);
-          //     _anniversaries.sort((a, b) => b.date.compareTo(a.date));
+          //     _journals.add(newItem);
+          //     _journals.sort((a, b) => b.date.compareTo(a.date));
           //   });
           // }
         },

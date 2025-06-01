@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/anniversary.dart';
+import '../../../domain/entities/journal.dart';
 
 abstract class DiaryEvent extends Equatable {
   const DiaryEvent();
@@ -7,27 +7,27 @@ abstract class DiaryEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadAnniversariesEvent extends DiaryEvent {}
+class LoadJournalsEvent extends DiaryEvent {}
 
-class AddAnniversaryEvent extends DiaryEvent {
-  final Anniversary anniversary;
-  const AddAnniversaryEvent(this.anniversary);
-
-  @override
-  List<Object?> get props => [anniversary];
-}
-
-class UpdateAnniversaryEvent extends DiaryEvent {
-  final Anniversary anniversary;
-  const UpdateAnniversaryEvent(this.anniversary);
+class AddJournalEvent extends DiaryEvent {
+  final Journal journal;
+  const AddJournalEvent(this.journal);
 
   @override
-  List<Object?> get props => [anniversary];
+  List<Object?> get props => [journal];
 }
 
-class DeleteAnniversaryEvent extends DiaryEvent {
+class UpdateJournalEvent extends DiaryEvent {
+  final Journal journal;
+  const UpdateJournalEvent(this.journal);
+
+  @override
+  List<Object?> get props => [journal];
+}
+
+class DeleteJournalEvent extends DiaryEvent {
   final int id;
-  const DeleteAnniversaryEvent(this.id);
+  const DeleteJournalEvent(this.id);
 
   @override
   List<Object?> get props => [id];

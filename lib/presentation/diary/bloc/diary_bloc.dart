@@ -1,36 +1,36 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/usecases/add_anniversary.dart';
-import '../../../domain/usecases/delete_anniversary.dart';
-import '../../../domain/usecases/get_all_anniversaries.dart';
-import '../../../domain/usecases/update_anniversary.dart';
+import '../../../domain/usecases/add_journal.dart';
+import '../../../domain/usecases/delete_journal.dart';
+import '../../../domain/usecases/get_all_journals.dart';
+import '../../../domain/usecases/update_journal.dart';
 import 'diary_event.dart';
 import 'diary_state.dart';
 
 class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
-  final GetAllAnniversaries getAllAnniversaries;
-  final AddAnniversary addAnniversary;
-  final UpdateAnniversary updateAnniversary;
-  final DeleteAnniversary deleteAnniversary;
+  final GetAllJournals getAllJournals;
+  final AddJournal addJournal;
+  final UpdateJournal updateJournal;
+  final DeleteJournal deleteJournal;
 
   DiaryBloc({
-    required this.getAllAnniversaries,
-    required this.addAnniversary,
-    required this.updateAnniversary,
-    required this.deleteAnniversary,
+    required this.getAllJournals,
+    required this.addJournal,
+    required this.updateJournal,
+    required this.deleteJournal,
   }) : super(DiaryInitial()) {
-    on<LoadAnniversariesEvent>(_onLoad);
-    on<AddAnniversaryEvent>(_onAdd);
-    on<UpdateAnniversaryEvent>(_onUpdate);
-    on<DeleteAnniversaryEvent>(_onDelete);
+    on<LoadJournalsEvent>(_onLoad);
+    on<AddJournalEvent>(_onAdd);
+    on<UpdateJournalEvent>(_onUpdate);
+    on<DeleteJournalEvent>(_onDelete);
   }
 
   Future<void> _onLoad(
-    LoadAnniversariesEvent event,
+    LoadJournalsEvent event,
     Emitter<DiaryState> emit,
   ) async {
     emit(DiaryLoading());
     try {
-      final list = await getAllAnniversaries();
+      final list = await getAllJournals();
       // sort mới → cũ
       list.sort((a, b) => b.date.compareTo(a.date));
       emit(DiaryLoaded(list));
@@ -39,40 +39,37 @@ class DiaryBloc extends Bloc<DiaryEvent, DiaryState> {
     }
   }
 
-  Future<void> _onAdd(
-    AddAnniversaryEvent event,
-    Emitter<DiaryState> emit,
-  ) async {
+  Future<void> _onAdd(AddJournalEvent event, Emitter<DiaryState> emit) async {
     try {
-      await addAnniversary(event.anniversary);
-      emit(AnniversaryOperationSuccess());
-      add(LoadAnniversariesEvent());
+      await addJournal(event.journal);
+      emit(JournalOperationSuccess());
+      add(LoadJournalsEvent());
     } catch (e) {
       emit(DiaryError('Add failed: $e'));
     }
   }
 
   Future<void> _onUpdate(
-    UpdateAnniversaryEvent event,
+    UpdateJournalEvent event,
     Emitter<DiaryState> emit,
   ) async {
     try {
-      await updateAnniversary(event.anniversary);
-      emit(AnniversaryOperationSuccess());
-      add(LoadAnniversariesEvent());
+      await updateJournal(event.journal);
+      emit(JournalOperationSuccess());
+      add(LoadJournalsEvent());
     } catch (e) {
       emit(DiaryError('Update failed: $e'));
     }
   }
 
   Future<void> _onDelete(
-    DeleteAnniversaryEvent event,
+    DeleteJournalEvent event,
     Emitter<DiaryState> emit,
   ) async {
     try {
-      await deleteAnniversary(event.id);
-      emit(AnniversaryOperationSuccess());
-      add(LoadAnniversariesEvent());
+      await deleteJournal(event.id);
+      emit(JournalOperationSuccess());
+      add(LoadJournalsEvent());
     } catch (e) {
       emit(DiaryError('Delete failed: $e'));
     }

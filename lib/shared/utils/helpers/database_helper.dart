@@ -11,7 +11,7 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('anniversaries.db');
+    _database = await _initDB('journals.db');
     return _database!;
   }
 
@@ -28,7 +28,7 @@ class DatabaseHelper {
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE anniversaries (
+      CREATE TABLE journals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
         date INTEGER,

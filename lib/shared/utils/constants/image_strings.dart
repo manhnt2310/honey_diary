@@ -5,4 +5,7 @@ class ImageStrings {
   static const String onboarding3 = 'lib/assets/gif/sammy-line-delivery.gif';
   static const String onboarding11 = 'lib/assets/image/icons8-love-100.png';
   static const String love = 'lib/assets/gif/love.gif';
+
+  static const String journal = 'lib/assets/image/journal.png';
+  static const String couple = 'lib/assets/image/couple.png';
 }

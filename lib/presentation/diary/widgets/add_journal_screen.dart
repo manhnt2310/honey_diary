@@ -1,18 +1,18 @@
-// presentation/screens/add_anniversary_screen.dart
+// presentation/screens/add_journal_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/anniversary.dart';
+import '../../../domain/entities/journal.dart';
 import '../bloc/diary_bloc.dart';
 import '../bloc/diary_event.dart';
 
-class AddAnniversaryScreen extends StatefulWidget {
-  const AddAnniversaryScreen({super.key});
+class AddJournalScreen extends StatefulWidget {
+  const AddJournalScreen({super.key});
 
   @override
-  AddAnniversaryScreenState createState() => AddAnniversaryScreenState();
+  AddJournalScreenState createState() => AddJournalScreenState();
 }
 
-class AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
+class AddJournalScreenState extends State<AddJournalScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -21,7 +21,7 @@ class AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Anniversary')),
+      appBar: AppBar(title: const Text('Add Journal')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -65,15 +65,15 @@ class AddAnniversaryScreenState extends State<AddAnniversaryScreen> {
                 child: const Text('Save'),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Tạo Anniversary entity và gửi event thêm mới
-                    final ann = Anniversary(
+                    // Tạo Journal entity và gửi event thêm mới
+                    final ann = Journal(
                       title: _titleController.text,
                       date: _selectedDate,
                       description: _descriptionController.text,
                       imagePaths: [],
                       id: 0, // Giả sử không có ảnh trong ví dụ này
                     );
-                    context.read<DiaryBloc>().add(AddAnniversaryEvent(ann));
+                    context.read<DiaryBloc>().add(AddJournalEvent(ann));
                     Navigator.pop(context);
                   }
                 },

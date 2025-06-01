@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../domain/entities/anniversary.dart';
+import '../../../domain/entities/journal.dart';
 import '../bloc/diary_bloc.dart';
 import '../bloc/diary_event.dart';
 import '../bloc/diary_state.dart';
-import 'add_anniversary_screen.dart';
-import 'anniversary_detail_screen.dart';
+import 'add_journal_screen.dart';
+import 'journal_detail_screen.dart';
 
 class DiaryScreen extends StatelessWidget {
   const DiaryScreen({super.key});
@@ -15,35 +15,34 @@ class DiaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Khi mở màn hình, dispatch Load
-    context.read<DiaryBloc>().add(LoadAnniversariesEvent());
+    context.read<DiaryBloc>().add(LoadJournalsEvent());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Anniversary Journal')),
+      appBar: AppBar(title: const Text('Journal Journal')),
       body: BlocBuilder<DiaryBloc, DiaryState>(
         builder: (context, state) {
           if (state is DiaryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is DiaryLoaded) {
-            if (state.anniversaries.isEmpty) {
+            if (state.journals.isEmpty) {
               return const Center(child: Text('Start journaling today.'));
             }
             return ListView.builder(
               padding: const EdgeInsets.all(12),
-              itemCount: state.anniversaries.length,
+              itemCount: state.journals.length,
               itemBuilder: (ctx, i) {
-                final ann = state.anniversaries[i];
+                final ann = state.journals[i];
                 return GestureDetector(
                   onTap: () async {
                     // Chuyển đến Detail, chờ kết quả (update/delete trả về qua bloc)
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (_) => AnniversaryDetailScreen(anniversary: ann),
+                        builder: (_) => JournalDetailScreen(journal: ann),
                       ),
                     );
                   },
-                  child: AnniversaryCard(anniversary: ann),
+                  child: JournalCard(journal: ann),
                 );
               },
             );
@@ -57,7 +56,7 @@ class DiaryScreen extends StatelessWidget {
         onPressed:
             () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const AddAnniversaryScreen()),
+              MaterialPageRoute(builder: (_) => const AddJournalScreen()),
             ),
         child: const Icon(Icons.add),
       ),
@@ -67,13 +66,13 @@ class DiaryScreen extends StatelessWidget {
 }
 
 /// Đưa phần Card riêng cho dễ đọc
-class AnniversaryCard extends StatelessWidget {
-  final Anniversary anniversary;
-  const AnniversaryCard({required this.anniversary, super.key});
+class JournalCard extends StatelessWidget {
+  final Journal journal;
+  const JournalCard({required this.journal, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dateString = DateFormat('EEEE, MMM d').format(anniversary.date);
+    final dateString = DateFormat('EEEE, MMM d').format(journal.date);
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -84,15 +83,14 @@ class AnniversaryCard extends StatelessWidget {
           children: [
             // Ảnh & nội dung giống cũ, bạn có thể re-use _buildCollage(...)
             Text(
-              anniversary.title,
+              journal.title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            if (anniversary.description != null &&
-                anniversary.description!.isNotEmpty)
+            if (journal.description != null && journal.description!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  anniversary.description!,
+                  journal.description!,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

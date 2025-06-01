@@ -80,7 +80,9 @@ class StartScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image(
-                        image: AssetImage('lib/assets/gif/icons8-love (1).gif'),
+                        image: AssetImage(
+                          'lib/assets/image/icons8-love-100.png',
+                        ),
                       ),
                       SizedBox(height: 10),
                       LoveTextDisplay(),

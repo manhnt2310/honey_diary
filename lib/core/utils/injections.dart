@@ -1,12 +1,12 @@
 import 'package:get_it/get_it.dart';
 
-import '../../data/data_sources/anniversary_local_data_source.dart';
-import '../../data/repositories/anniversary_repository_impl.dart';
-import '../../domain/repositories/anniversary_repository.dart';
-import '../../domain/usecases/add_anniversary.dart';
-import '../../domain/usecases/delete_anniversary.dart';
-import '../../domain/usecases/get_all_anniversaries.dart';
-import '../../domain/usecases/update_anniversary.dart';
+import '../../data/data_sources/journal_local_data_source.dart';
+import '../../data/repositories/journal_repository_impl.dart';
+import '../../domain/repositories/journal_repository.dart';
+import '../../domain/usecases/add_journal.dart';
+import '../../domain/usecases/delete_journal.dart';
+import '../../domain/usecases/get_all_journals.dart';
+import '../../domain/usecases/update_journal.dart';
 import '../../presentation/diary/bloc/diary_bloc.dart';
 import '../../shared/utils/helpers/database_helper.dart';
 
@@ -17,36 +17,36 @@ Future<void> initInjections() async {
   sl.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper.instance);
 
   // 1) Data source (lúc này sl<DatabaseHelper>() đã có)
-  sl.registerLazySingleton<AnniversaryLocalDataSource>(
-    () => AnniversaryLocalDataSourceImpl(sl<DatabaseHelper>()),
+  sl.registerLazySingleton<JournalLocalDataSource>(
+    () => JournalLocalDataSourceImpl(sl<DatabaseHelper>()),
   );
 
   // 2) Repository
-  sl.registerLazySingleton<AnniversaryRepository>(
-    () => AnniversaryRepositoryImpl(sl<AnniversaryLocalDataSource>()),
+  sl.registerLazySingleton<JournalRepository>(
+    () => JournalRepositoryImpl(sl<JournalLocalDataSource>()),
   );
 
   // 3) Use cases
-  sl.registerLazySingleton<GetAllAnniversaries>(
-    () => GetAllAnniversaries(sl<AnniversaryRepository>()),
+  sl.registerLazySingleton<GetAllJournals>(
+    () => GetAllJournals(sl<JournalRepository>()),
   );
-  sl.registerLazySingleton<AddAnniversary>(
-    () => AddAnniversary(sl<AnniversaryRepository>()),
+  sl.registerLazySingleton<AddJournal>(
+    () => AddJournal(sl<JournalRepository>()),
   );
-  sl.registerLazySingleton<UpdateAnniversary>(
-    () => UpdateAnniversary(sl<AnniversaryRepository>()),
+  sl.registerLazySingleton<UpdateJournal>(
+    () => UpdateJournal(sl<JournalRepository>()),
   );
-  sl.registerLazySingleton<DeleteAnniversary>(
-    () => DeleteAnniversary(sl<AnniversaryRepository>()),
+  sl.registerLazySingleton<DeleteJournal>(
+    () => DeleteJournal(sl<JournalRepository>()),
   );
 
   // 4) Bloc
   sl.registerFactory<DiaryBloc>(
     () => DiaryBloc(
-      getAllAnniversaries: sl<GetAllAnniversaries>(),
-      addAnniversary: sl<AddAnniversary>(),
-      updateAnniversary: sl<UpdateAnniversary>(),
-      deleteAnniversary: sl<DeleteAnniversary>(),
+      getAllJournals: sl<GetAllJournals>(),
+      addJournal: sl<AddJournal>(),
+      updateJournal: sl<UpdateJournal>(),
+      deleteJournal: sl<DeleteJournal>(),
     ),
   );
 }

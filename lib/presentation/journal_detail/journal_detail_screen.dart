@@ -1,20 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../anniversary_addition/add_anniversary_screen.dart';
+import '../journal_addition/add_journal_screen.dart';
 import '../diary/presentation/diary_screen.dart';
 
-class AnniversaryDetailScreen extends StatefulWidget {
-  final Anniversary anniversary;
-  const AnniversaryDetailScreen({super.key, required this.anniversary});
+class JournalDetailScreen extends StatefulWidget {
+  final Journal journal;
+  const JournalDetailScreen({super.key, required this.journal});
 
   @override
-  State<AnniversaryDetailScreen> createState() =>
-      _AnniversaryDetailScreenState();
+  State<JournalDetailScreen> createState() => _JournalDetailScreenState();
 }
 
-class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
-  late Anniversary currentAnn;
+class _JournalDetailScreenState extends State<JournalDetailScreen> {
+  late Journal currentAnn;
   late List<String> imagePaths;
   final PageController _pageController = PageController(viewportFraction: 0.8);
   int _currentPage = 0;
@@ -22,7 +21,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
   @override
   void initState() {
     super.initState();
-    currentAnn = widget.anniversary;
+    currentAnn = widget.journal;
     imagePaths = currentAnn.imagePaths;
     _pageController.addListener(() {
       setState(() {
@@ -41,11 +40,11 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
     return DateFormat("dd/MM/yyyy").format(currentAnn.date);
   }
 
-  Future<void> _editAnniversary() async {
-    final updated = await Navigator.push<Anniversary>(
+  Future<void> _editJournal() async {
+    final updated = await Navigator.push<Journal>(
       context,
       MaterialPageRoute(
-        builder: (context) => AddAnniversaryScreen(anniversary: currentAnn),
+        builder: (context) => AddJournalScreen(journal: currentAnn),
       ),
     );
     if (updated != null) {
@@ -56,7 +55,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
     }
   }
 
-  Future<void> _deleteAnniversary() async {
+  Future<void> _deleteJournal() async {
     final confirm = await showDialog<bool>(
       context: context,
       builder:
@@ -83,7 +82,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
     }
   }
 
-  void _popWithUpdatedAnniversary() {
+  void _popWithUpdatedJournal() {
     Navigator.pop(context, currentAnn);
   }
 
@@ -116,17 +115,17 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.white),
-            onPressed: _editAnniversary,
+            onPressed: _editJournal,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.white),
-            onPressed: _deleteAnniversary,
+            onPressed: _deleteJournal,
           ),
         ],
       ),
       body: WillPopScope(
         onWillPop: () async {
-          _popWithUpdatedAnniversary();
+          _popWithUpdatedJournal();
           return false;
         },
         child: SingleChildScrollView(
@@ -226,7 +225,7 @@ class _AnniversaryDetailScreenState extends State<AnniversaryDetailScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _popWithUpdatedAnniversary,
+        onPressed: _popWithUpdatedJournal,
         backgroundColor: Colors.pinkAccent,
         shape: const CircleBorder(),
         child: const Icon(Icons.check, color: Colors.white),

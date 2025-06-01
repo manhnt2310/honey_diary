@@ -27,9 +27,9 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        // Khởi tạo AnniversaryBloc và ngay lập tức load data
+        // Khởi tạo JournalBloc và ngay lập tức load data
         BlocProvider<DiaryBloc>(
-          create: (_) => sl<DiaryBloc>()..add(LoadAnniversariesEvent()),
+          create: (_) => sl<DiaryBloc>()..add(LoadJournalsEvent()),
         ),
       ],
       child: MyApp(firstScreen: firstScreen),
