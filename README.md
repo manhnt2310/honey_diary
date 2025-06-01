@@ -115,8 +115,6 @@ The **honey_diary** project follows Clean Architecture, divided into three main 
 
 -  **`diary_page.dart`**: Instantiates `DiaryBloc` via GetIt and provides the main UI (Scaffold + AppBar).
 
--  **`diary_screen.dart`**: Listens to state changes from `DiaryBloc` and displays `diary_view.dart`.
-
 -  **`diary_view.dart`**: Contains actual widgets (ListView, JournalCard, Form, etc.).
 
 -  **`widgets/`**: Contains reusable child widgets (e.g., `JournalCard`, `JournalForm`, etc.).
@@ -148,9 +146,6 @@ The **honey_diary** project follows Clean Architecture, divided into three main 
 - We leverage Flutter’s built-in `Navigator` with named routes registered in `main.dart`.
 
 - Each feature declares its own route constants (e.g., `/home`, `/diary`, `/journal_add`).
-
-- For more complex nested navigation, integration with a package like `go_router` could be added later, but is not yet implemented.
-
   
   
 
