@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:honey_diary/presentation/diary/presentation/diary_screen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -63,9 +65,21 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   String _nameMe = "Male";
   String _nameYou = "Female";
 
+  // Doi hinh nen
+  String? _backgroundImagePath;
+  String? _avatarMePath;
+  String? _avatarYouPath;
+  final ImagePicker _imagePicker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
+
+    // Hinh nen
+    _loadSavedBackground();
+
+    // Avatar
+    _loadSavedAvatars();
 
     // Tính tổng ngày và phần trăm
     final now = DateTime.now();
@@ -114,6 +128,148 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
     });
     _loadSavedNames();
     _loadSavedBirthDates();
+  }
+
+  // Tải đường dẫn hình nền từ SharedPreferences
+  Future<void> _loadSavedBackground() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedPath = prefs.getString('backgroundImagePath');
+    if (savedPath != null && savedPath.isNotEmpty) {
+      setState(() {
+        _backgroundImagePath = savedPath;
+      });
+    }
+  }
+
+  // Gọi Image Picker để chọn hình nền và lưu lại
+  Future<void> _pickAndSaveBackground() async {
+    final XFile? pickedFile = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85, // độ nén ảnh (0-100), bạn có thể điều chỉnh
+    );
+    if (pickedFile != null) {
+      final path = pickedFile.path;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('backgroundImagePath', path);
+      setState(() {
+        _backgroundImagePath = path;
+      });
+    }
+  }
+
+  void _showBackgroundOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image, color: Colors.pinkAccent),
+              title: const Text(
+                'Change wallpaper',
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSaveBackground();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.restore, color: Colors.pinkAccent),
+              title: const Text(
+                'Use original wallpaper',
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _resetBackground();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _resetBackground() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('backgroundImagePath');
+    setState(() {
+      _backgroundImagePath = null;
+    });
+  }
+
+  Future<void> _loadSavedAvatars() async {
+    final prefs = await SharedPreferences.getInstance();
+    final me = prefs.getString('avatarMePath');
+    final you = prefs.getString('avatarYouPath');
+    setState(() {
+      _avatarMePath = (me != null && me.isNotEmpty) ? me : null;
+      _avatarYouPath = (you != null && you.isNotEmpty) ? you : null;
+    });
+  }
+
+  // Mo album de chon avatar sau do luu lai vao shared preference
+  Future<void> _pickAndSaveAvatar(bool isMe) async {
+    final XFile? pickedFile = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (pickedFile != null) {
+      final path = pickedFile.path;
+      final prefs = await SharedPreferences.getInstance();
+      if (isMe) {
+        await prefs.setString('avatarMePath', path);
+        setState(() => _avatarMePath = path);
+      } else {
+        await prefs.setString('avatarYouPath', path);
+        setState(() => _avatarYouPath = path);
+      }
+    }
+  }
+
+  /// Hiển thị AlertDialog cho avatar Me hoặc You
+  void _showAvatarDialog(bool isMe) {
+    final avatarPath = isMe ? _avatarMePath : _avatarYouPath;
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Hiển thị avatar lớn: nếu đã chọn thì dùng FileImage, ngược lại dùng asset mặc định
+              CircleAvatar(
+                radius: 80,
+                backgroundImage:
+                    avatarPath != null
+                        ? FileImage(File(avatarPath))
+                        : AssetImage(
+                              isMe
+                                  ? 'lib/assets/image/male.jpg'
+                                  : 'lib/assets/image/female.jpg',
+                            )
+                            as ImageProvider,
+              ),
+              const SizedBox(height: 16),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _pickAndSaveAvatar(isMe);
+                },
+                icon: const Icon(Icons.photo, color: Colors.pinkAccent),
+                label: const Text(
+                  'Change Avatar',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   String _formatTime(DateTime dt) {
@@ -395,7 +551,7 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                 //   icon: const Icon(Icons.edit_outlined),
                 // ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: _showBackgroundOptions,
                   icon: const Icon(Icons.favorite, color: Colors.white),
                 ),
               ],
@@ -441,12 +597,15 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
         children: [
           // Background
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('lib/assets/image/background.JPG'),
+                image:
+                    _backgroundImagePath != null
+                        ? FileImage(File(_backgroundImagePath!))
+                            as ImageProvider
+                        : const AssetImage('lib/assets/image/background.JPG'),
                 fit: BoxFit.cover,
               ),
-              // color: Color.fromARGB(255, 252, 198, 206),
             ),
           ),
 
@@ -657,10 +816,17 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // Avatar
-                          const CircleAvatar(
-                            radius: 50,
-                            backgroundImage: AssetImage(
-                              'lib/assets/image/male.jpg',
+                          GestureDetector(
+                            onTap: () => _showAvatarDialog(true),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  _avatarMePath != null
+                                      ? FileImage(File(_avatarMePath!))
+                                      : const AssetImage(
+                                            'lib/assets/image/male.jpg',
+                                          )
+                                          as ImageProvider,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -759,12 +925,20 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const CircleAvatar(
-                            radius: 50,
-                            backgroundImage: AssetImage(
-                              'lib/assets/image/female.jpg',
+                          GestureDetector(
+                            onTap: () => _showAvatarDialog(false),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  _avatarYouPath != null
+                                      ? FileImage(File(_avatarYouPath!))
+                                      : const AssetImage(
+                                            'lib/assets/image/female.jpg',
+                                          )
+                                          as ImageProvider,
                             ),
                           ),
+
                           const SizedBox(height: 8),
                           GestureDetector(
                             onTap: () => _editName(false),
