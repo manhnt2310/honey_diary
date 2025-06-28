@@ -5,7 +5,7 @@ import 'package:readmore/readmore.dart';
 
 import '../../../shared/utils/helpers/database_helper.dart';
 import '../../journal_addition/add_journal_screen.dart';
-import '../../journal_addition/presentation/journal_addition_page.dart';
+//import '../../journal_addition/presentation/journal_addition_page.dart';
 import '../../journal_detail/journal_detail_screen.dart';
 
 class Journal {
