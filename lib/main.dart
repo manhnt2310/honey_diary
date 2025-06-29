@@ -5,6 +5,8 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:honey_diary/core/utils/injections.dart';
 import 'package:honey_diary/presentation/chat/consts.dart';
+import 'presentation/chat/bloc/chat_bloc.dart';
+import 'presentation/chat/bloc/chat_event.dart';
 import 'presentation/diary/bloc/diary_bloc.dart';
 import 'presentation/diary/bloc/diary_event.dart';
 import 'presentation/intro/onboarding_screen.dart';
@@ -31,10 +33,10 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        // Khởi tạo JournalBloc và ngay lập tức load data
         BlocProvider<DiaryBloc>(
           create: (_) => sl<DiaryBloc>()..add(LoadJournalsEvent()),
         ),
+        BlocProvider<ChatBloc>(create: (_) => sl<ChatBloc>()),
       ],
       child: MyApp(firstScreen: firstScreen),
     ),
