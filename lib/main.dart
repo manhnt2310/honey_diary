@@ -1,8 +1,10 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:honey_diary/core/utils/injections.dart';
+import 'package:honey_diary/presentation/chat/consts.dart';
 import 'presentation/diary/bloc/diary_bloc.dart';
 import 'presentation/diary/bloc/diary_event.dart';
 import 'presentation/intro/onboarding_screen.dart';
@@ -23,6 +25,8 @@ void main() async {
   } else {
     firstScreen = const OnboardingScreen();
   }
+
+  Gemini.init(apiKey: Gemini_API_key);
 
   runApp(
     MultiBlocProvider(

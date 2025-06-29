@@ -43,6 +43,7 @@ dependencies:
   sqflite: ^2.2.7
   path_provider: ^2.1.5
   path:
+  mime:
   geolocator: ^10.1.0
   geocoding:
   lottie:
@@ -51,6 +52,7 @@ dependencies:
   bloc: ^8.1.2
   dash_chat_2: ^0.0.21
   chat_gpt_sdk: ^3.1.5
+  flutter_gemini: ^3.0.0
 
   # Icons
   iconsax: ^0.0.8
