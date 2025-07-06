@@ -1,12 +1,17 @@
 import 'package:get_it/get_it.dart';
 
+import '../../data/data_sources/chat_remote_data_source.dart';
 import '../../data/data_sources/journal_local_data_source.dart';
+import '../../data/repositories/chat_repository_impl.dart';
 import '../../data/repositories/journal_repository_impl.dart';
+import '../../domain/repositories/chat_massage_repository.dart';
 import '../../domain/repositories/journal_repository.dart';
 import '../../domain/usecases/add_journal.dart';
 import '../../domain/usecases/delete_journal.dart';
 import '../../domain/usecases/get_all_journals.dart';
+import '../../domain/usecases/send_massage.dart';
 import '../../domain/usecases/update_journal.dart';
+import '../../presentation/chat/bloc/chat_bloc.dart';
 import '../../presentation/diary/bloc/diary_bloc.dart';
 import '../../shared/utils/helpers/database_helper.dart';
 
@@ -49,4 +54,23 @@ Future<void> initInjections() async {
       deleteJournal: sl<DeleteJournal>(),
     ),
   );
+
+  // Chat
+  // 1) Data source
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(),
+  );
+
+  // 2) Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(sl<ChatRemoteDataSource>()),
+  );
+
+  // 3) Use case
+  sl.registerLazySingleton<SendMessageUseCase>(
+    () => SendMessageUseCase(sl<ChatRepository>()),
+  );
+
+  // 4) BLoC
+  sl.registerFactory<ChatBloc>(() => ChatBloc(sl<SendMessageUseCase>()));
 }
