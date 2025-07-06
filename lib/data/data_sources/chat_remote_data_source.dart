@@ -16,7 +16,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     return ChatMessageModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       text: output,
-      userId: 'gemini',
+      userId: 'honey',
       createdAt: DateTime.now(),
     );
   }

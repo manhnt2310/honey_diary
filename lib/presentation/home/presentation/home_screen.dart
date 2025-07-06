@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 
-import '../../chat/page/chat_page.dart';
+import '../../chat/presentation/chat_page.dart';
 
 //import '../../diary/presentation/diary_page.dart';
 //import '../../diary/presentations/diary_screen.dart';
