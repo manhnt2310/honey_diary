@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../../../shared/utils/constants/sizes.dart';
 
 // ignore: must_be_immutable'
@@ -24,8 +25,9 @@ class OnboardingPape extends StatelessWidget {
                 padding: const EdgeInsets.all(MSizes.defaultSpace),
                 child: Column(
                   children: [
-                    Image(
-                      image: AssetImage(image),
+                    const SizedBox(height: 80),
+                    Lottie.asset(
+                      image,
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.6,
                     ),
