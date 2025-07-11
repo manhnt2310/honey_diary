@@ -8,4 +8,8 @@ class ImageStrings {
 
   static const String journal = 'lib/assets/image/journal.png';
   static const String couple = 'lib/assets/image/couple.png';
+
+  static const String onbd1 = 'lib/assets/json/onbd1.json';
+  static const String onbd2 = 'lib/assets/json/onbd2.json';
+  static const String onbd3 = 'lib/assets/json/onbd3.json';
 }

@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:honey_diary/presentation/weather/presentation/weather_page.dart';
 
+import '../../chat/presentation/chat_page.dart';
+
 //import '../../diary/presentation/diary_page.dart';
 //import '../../diary/presentations/diary_screen.dart';
 
@@ -553,6 +555,14 @@ class HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
                 IconButton(
                   onPressed: _showBackgroundOptions,
                   icon: const Icon(Icons.favorite, color: Colors.white),
+                ),
+                IconButton(
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ChatPage()),
+                      ),
+                  icon: const Icon(Icons.chat_bubble, color: Colors.white),
                 ),
               ],
             ),
