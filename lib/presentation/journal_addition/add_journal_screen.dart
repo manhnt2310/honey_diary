@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import '../diary/presentation/diary_screen.dart';
 
 class AddJournalScreen extends StatefulWidget {
@@ -47,11 +49,23 @@ class _AddJournalScreenState extends State<AddJournalScreen> {
   Future<void> _pickImages() async {
     final picker = ImagePicker();
     final List<XFile> pickedFiles = await picker.pickMultiImage();
-    if (pickedFiles.isNotEmpty) {
-      setState(() {
-        _selectedImages.addAll(pickedFiles.map((xfile) => xfile.path));
-      });
+    if (pickedFiles.isEmpty) return;
+
+    final docsDir = await getApplicationDocumentsDirectory();
+    final saveDir = Directory(p.join(docsDir.path, 'diary_images'));
+    if (!await saveDir.exists()) await saveDir.create(recursive: true);
+
+    final newPaths = <String>[];
+    for (final xfile in pickedFiles) {
+      final fileName = '${DateTime.now().microsecondsSinceEpoch}_${p.basename(xfile.path)}';
+      final destPath = p.join(saveDir.path, fileName);
+      await File(xfile.path).copy(destPath);
+      newPaths.add(destPath);
     }
+
+    setState(() {
+      _selectedImages.addAll(newPaths);
+    });
   }
 
   Future<void> _pickDate(BuildContext context) async {

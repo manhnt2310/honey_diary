@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../shared/utils/helpers/database_helper.dart';
@@ -79,21 +80,47 @@ class _DiaryScreenState extends State<DiaryScreen> {
     });
   }
 
+  // Resolves a stored absolute path to remain valid after iOS app updates.
+  // On iOS, the app container UUID changes on each fresh install (Xcode/TestFlight),
+  // but the Documents directory contents are preserved. If the stored path no longer
+  // exists, we rebuild it using the relative portion after "/Documents/" combined
+  // with the current Documents directory.
+  Future<String> _resolveImagePath(String storedPath) async {
+    if (await File(storedPath).exists()) return storedPath;
+
+    const docMarker = '/Documents/';
+    final markerIndex = storedPath.indexOf(docMarker);
+    if (markerIndex == -1) return storedPath; // can't recover, return as-is
+
+    final relativePart = storedPath.substring(markerIndex + docMarker.length);
+    final docsDir = await getApplicationDocumentsDirectory();
+    final rebuiltPath = '${docsDir.path}/$relativePart';
+    return rebuiltPath;
+  }
+
   Future<List<Journal>> _getAllJournals() async {
     final db = await DatabaseHelper.instance.database;
     final result = await db.query('journals', orderBy: 'date ASC');
 
-    return result.map((row) {
-      return Journal(
-        id: row['id'] as int?,
-        title: row['title'] as String,
-        date: DateTime.fromMillisecondsSinceEpoch(row['date'] as int),
-        imagePaths: Journal.decodeImagePaths(
-          row['imagePaths'] as String? ?? row['imagePath'] as String?,
-        ),
-        content: row['content'] as String?,
+    final journals = <Journal>[];
+    for (final row in result) {
+      final rawPaths = Journal.decodeImagePaths(
+        row['imagePaths'] as String? ?? row['imagePath'] as String?,
       );
-    }).toList();
+      final resolvedPaths = await Future.wait(
+        rawPaths.map((p) => _resolveImagePath(p)),
+      );
+      journals.add(
+        Journal(
+          id: row['id'] as int?,
+          title: row['title'] as String,
+          date: DateTime.fromMillisecondsSinceEpoch(row['date'] as int),
+          imagePaths: resolvedPaths,
+          content: row['content'] as String?,
+        ),
+      );
+    }
+    return journals;
   }
 
   Future<int> _insertJournal(Journal ann) async {
